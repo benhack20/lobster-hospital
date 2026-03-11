@@ -98,6 +98,16 @@ function renderRecords(records) {
         const baseScore = scoreMap[record.healthStatus] || 80;
         const displayScore = baseScore + Math.floor(Math.random() * 5);
 
+        // 动态状态印章
+        const stampMap = {
+            excellent: '已康复',
+            fair: '准予出院',
+            poor: '留院观察',
+            critical: '抢救中'
+        };
+        const stampText = stampMap[record.healthStatus] || '处理中';
+        const stampClass = `stamp-${record.healthStatus}`;
+
         const patientName = record.patientName || '神秘小龙虾';
         const avatarSeed = record.patientName || record.time.toString();
 
@@ -124,7 +134,7 @@ function renderRecords(records) {
                         <div class="health-score-pill ${scoreClass}">
                             ❤️ ${displayScore}分
                         </div>
-                        <div class="discharge-stamp">已出院</div>
+                        <div class="discharge-stamp ${stampClass}">${stampText}</div>
                     </div>
                 </div>
             </div>

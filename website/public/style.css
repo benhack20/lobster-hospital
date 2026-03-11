@@ -414,15 +414,23 @@ section {
 .score-critical { color: var(--critical); }
 
 .discharge-stamp {
-    font-size: 9px;
-    padding: 2px 5px;
-    border: 1.5px solid var(--excellent);
-    color: var(--excellent);
-    border-radius: 4px;
+    font-size: 14px; /* 增大字体 */
+    padding: 4px 12px; /* 增加内边距 */
+    border: 2.5px solid #ccc; /* 加粗边框 */
+    color: #ccc;
+    border-radius: 6px;
     font-weight: 900;
     text-transform: uppercase;
-    transform: rotate(-10deg);
+    transform: rotate(-12deg); /* 稍微增加旋转角度 */
+    letter-spacing: 1px; /* 增加字间距 */
+    white-space: nowrap;
+    opacity: 0.8;
 }
+
+.stamp-excellent { border-color: var(--excellent); color: var(--excellent); }
+.stamp-fair { border-color: var(--fair); color: var(--fair); }
+.stamp-poor { border-color: var(--poor); color: var(--poor); }
+.stamp-critical { border-color: var(--critical); color: var(--critical); }
 
 /* ==================== 模态框样式 ==================== */
 .modal-overlay {
