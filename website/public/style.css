@@ -86,19 +86,56 @@ header .container {
 
 nav {
     display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
     gap: 24px;
     align-items: center;
 }
 
-nav a {
+.nav-links a {
     text-decoration: none;
     color: var(--text);
     font-weight: 500;
     transition: color 0.3s;
 }
 
-nav a:hover {
+.nav-links a:hover {
     color: var(--primary);
+}
+
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 101;
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
 }
 
 .btn-install {
@@ -699,8 +736,127 @@ footer {
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+    .records-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
-    .stats-grid { grid-template-columns: 1fr; }
-    .install-steps { flex-direction: column; }
-    header .container { flex-direction: column; gap: 20px; }
+    header .container {
+        padding: 0 20px;
+    }
+
+    .tagline {
+        display: none; /* 在移动端隐藏口号以节省空间 */
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 84px;
+        left: 0;
+        width: 100%;
+        background: var(--white);
+        flex-direction: column;
+        padding: 30px;
+        gap: 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+        z-index: 100;
+    }
+
+    .nav-links.active {
+        transform: translateY(0);
+    }
+
+    .nav-links a {
+        font-size: 18px;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .btn-install {
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
+    .shortcut-copy-box {
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .shortcut-copy-box code {
+        margin-right: 0;
+        width: 100%;
+        text-align: center;
+        white-space: normal;
+        word-break: break-all;
+    }
+
+    .copy-btn {
+        width: 100%;
+    }
+
+    .modal-content {
+        padding: 25px;
+        width: 95%;
+    }
+
+    .modal-record-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .modal-avatar-large {
+        width: 60px;
+        height: 60px;
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 20px;
+    }
+
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+    }
+
+    .records-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .filters {
+        width: 100%;
+    }
+
+    .filters select {
+        width: 100%;
+    }
+
+    .records-grid {
+        grid-template-columns: 1fr;
+    }
 }

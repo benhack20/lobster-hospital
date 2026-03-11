@@ -30,6 +30,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     loadRecords(1);
     
+    // 移动端菜单切换
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // 点击链接后自动关闭菜单
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    }
+
     // 绑定模态框关闭事件
     const modal = document.getElementById('record-modal');
     document.querySelector('.modal-close').onclick = () => modal.classList.remove('active');
