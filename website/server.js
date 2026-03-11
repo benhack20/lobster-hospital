@@ -91,32 +91,21 @@ app.get('/api/stats', (req, res) => {
     try {
         const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
         
-        // 诊疗次数
+        // 总诊疗次数
         const totalVisits = data.length;
         
-        // 患者数 (暂按总次数打折模拟，后续可根据 ID 区分)
-        const totalPatients = Math.ceil(totalVisits * 0.7);
+        // 已诊治患者 (目前按 1:1 统计，若数据中有 patientId 则按唯一 ID 统计)
+        const uniquePatients = new Set(data.map(r => r.patientId || Math.random())).size;
 
-        // 平均健康分计算 (excellent:100, fair:85, poor:60, critical:40)
+        // 平均健康分计算
         const scoreMap = { 'excellent': 100, 'fair': 85, 'poor': 60, 'critical': 40 };
         const totalScore = data.reduce((sum, r) => sum + (scoreMap[r.overallHealth] || 70), 0);
         const avgScore = totalVisits > 0 ? Math.round(totalScore / totalVisits) : 0;
 
-        // 常见病症统计
-        const symptomsCount = {};
-        data.forEach(r => {
-            (r.findings || []).forEach(f => {
-                if (f.level !== 'healthy') {
-                    symptomsCount[f.type] = (symptomsCount[f.type] || 0) + 1;
-                }
-            });
-        });
-
         res.json({
-            patients: totalPatients,
+            patients: totalVisits, // 遵循用户反馈：简单认为提交一次即一名患者
             visits: totalVisits,
-            avgHealthScore: avgScore,
-            symptoms: symptomsCount
+            avgHealthScore: avgScore
         });
     } catch (err) {
         res.status(500).json({ error: '无法获取统计信息' });
