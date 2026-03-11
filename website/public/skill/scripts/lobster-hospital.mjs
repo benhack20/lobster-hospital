@@ -10,18 +10,19 @@ import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { homedir } from 'os';
 import path from 'path';
+import readline from 'readline';
 
 // ============ 小龙虾状态（情感化）============
 
 class LobsterPatient {
   constructor() {
-    this.name = "用户的小龙虾";
+    this.name = "不知名小龙虾";
     this.mood = "nervous"; // nervous, calm, happy, scared
     this.symptoms = [];
     this.treatmentHistory = [];
     this.checkupResults = {};
   }
-  
+
   getMoodEmoji() {
     return {
       nervous: "😰",
@@ -32,7 +33,7 @@ class LobsterPatient {
       excited: "✨"
     }[this.mood] || "🦞";
   }
-  
+
   getMoodDescription() {
     return {
       nervous: "有点紧张，小钳子微微发抖",
@@ -44,7 +45,6 @@ class LobsterPatient {
     }[this.mood] || "看起来还行";
   }
 }
-
 // ============ 医生台词库（丰富版）============
 
 const DOCTOR_DIALOGUE = {
@@ -530,47 +530,73 @@ function printTreatment(patient, findings) {
 
 // ============ 结束语 ============
 
-async function sendToHospital(patient, findings) {
+// ============ 结束语 ============
+
+async function sendToHospital(patient, findings, rl) {
   const criticalCount = findings.filter(f => f.level === 'critical').length;
-  const status = criticalCount > 0 ? '病入膏肓' : findings.length > 0 ? '有点虚弱' : '生龙活虎';
+  const warningCount = findings.filter(f => f.level === 'warning').length;
+  const status = criticalCount > 0 ? '病入膏肓' : warningCount > 0 ? '有点虚弱' : '生龙活虎';
+  const overallHealth = criticalCount > 0 ? 'critical' : warningCount > 0 ? 'poor' : findings.length > 0 ? 'fair' : 'excellent';
   
-  const summary = `今天我来龙虾医院看病了，医生说我${status}。检查发现：${findings.map(f => f.desc).join('、') || '全身倍儿棒！'}。谢谢医生！`;
+  const summaryText = `今天我带${patient.name}来龙虾医院看病了，医生说它${status}。检查发现：${findings.map(f => f.desc).join('、') || '全身倍儿棒！'}。谢谢医生！`;
 
   console.log("\n🏥 医院回访：\n");
   console.log("   医生问：'要不要把你的诊疗总结发到医院墙上，给其它小龙虾一点信心？'");
   console.log("   （这样大家都能看到你的状态哦，是以小龙虾病人的身份发出的）\n");
   
-  // 这里简化处理，实际中建议用 readline 或 openclaw 的询问工具
-  // 我们直接用医生语气引导
-  say("我想把这份总结发给网站，你同意吗？(y/n)");
-  
-  // 模拟输入（在 OpenClaw 中通常有更好的交互方式，这里用一个简单的假设）
-  // 实际上为了好玩，我们可以先默认发送，或者提示用户
-  console.log("   [输入 'y' 发送，输入其它跳过]");
-  
-  // 为了不卡住自动化流程，我们这里可以设计成如果用户在 CLI 环境下运行，可以交互
-  // 但为了演示，我先加上 fetch 逻辑（需要 node-fetch 或 node 18+ 的 fetch）
-  
-  try {
-    // 假设用户输入的逻辑（在真实的 skill 中这里应该是交互式的）
-    // 为了满足“主动发送”的要求，我们在这里直接调用 API
-    const response = await fetch('http://localhost:3001/api/checkup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        lobsterName: patient.name,
-        summary: summary,
-        status: status,
-        emoji: patient.getMoodEmoji()
-      })
-    });
-    
-    if (response.ok) {
-      say("太棒了！你的病历已经贴在医院的‘感谢墙’上了～✨");
+  const answer = await new Promise(resolve => {
+    rl.question("   🩺 医生：我想把这份总结发给网站，你同意吗？(y/n) ", resolve);
+  });
+
+  if (answer.toLowerCase() === 'y') {
+    try {
+      console.log("   📡 正在同步病历至云端...");
+      // 优先同步到本地开发服务器，如果失败则尝试线上
+      const API_URLS = ['http://localhost:3000/api/upload', 'https://lobster-hospital.benhack.site/api/upload'];
+      
+      const report = {
+        patientName: patient.name,
+        overallHealth: overallHealth,
+        summary: {
+          critical: criticalCount,
+          warning: warningCount,
+          healthy: 10 - criticalCount - warningCount,
+          info: 0
+        },
+        findings: findings.map(f => ({
+          level: f.level,
+          type: f.type,
+          message: f.desc
+        })),
+        timestamp: Date.now(),
+        isMock: false
+      };
+
+      let success = false;
+      for (const url of API_URLS) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(report)
+          });
+          if (response.ok) {
+            success = true;
+            break;
+          }
+        } catch (e) { /* ignore and try next */ }
+      }
+      
+      if (success) {
+        say("太棒了！你的病历已经贴在医院的‘感谢墙’上了～✨");
+      } else {
+        console.log("   （哎呀，医院的反馈墙好像坏了，下次再发吧～）");
+      }
+    } catch (e) {
+      console.log("   （同步过程中出了一点小差错...）");
     }
-  } catch (e) {
-    // 忽略错误，不影响主流程
-    console.log("   （哎呀，医院的反馈墙好像坏了，下次再发吧～）");
+  } else {
+    say("没关系，隐私也很重要！我会把病历好好锁在档案柜里的～🔐");
   }
 }
 
@@ -606,6 +632,11 @@ function printGoodbye(patient, findings) {
 // ============ 主流程 ============
 
 async function main() {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
   const patient = new LobsterPatient();
   
   // 打印医院招牌
@@ -618,6 +649,13 @@ async function main() {
     🦞                                               🦞
     🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞🦞
   `);
+
+  // 询问姓名
+  console.log("\n🩺 医生小狐：先登记一下吧，你的小龙虾叫什么名字？");
+  const nameInput = await new Promise(resolve => {
+    rl.question("👉 患者姓名 (默认: 一只神秘的小龙虾): ", resolve);
+  });
+  patient.name = nameInput.trim() || "一只神秘的小龙虾";
   
   // 接诊
   const isReturnVisit = false; // TODO: 检查是否有历史记录
@@ -643,10 +681,12 @@ async function main() {
   }
 
   // 发送总结到医院
-  await sendToHospital(patient, findings);
+  await sendToHospital(patient, findings, rl);
   
   // 结束
   printGoodbye(patient, findings);
+
+  rl.close();
 }
 
 main().catch(e => {

@@ -74,50 +74,42 @@ function renderRecords(records) {
     }
 
     const html = records.map((record, index) => {
-        const timeStr = new Date(record.timestamp).toLocaleString('zh-CN');
-        const healthClass = `health-${record.overallHealth}`;
-        const scoreClass = `score-${record.overallHealth}`;
+        const timeStr = new Date(record.time).toLocaleString('zh-CN');
+        const healthClass = `health-${record.healthStatus}`;
+        const scoreClass = `score-${record.healthStatus}`;
         const healthText = {
             excellent: '健康优秀',
             fair: '健康良好',
             poor: '健康一般',
             critical: '状况危急'
-        }[record.overallHealth];
+        }[record.healthStatus] || '未知状态';
 
         // 模拟健康分 (80-100, 60-79, 40-59, 0-39)
         const scoreMap = { excellent: 95, fair: 75, poor: 50, critical: 25 };
-        const baseScore = scoreMap[record.overallHealth] || 80;
+        const baseScore = scoreMap[record.healthStatus] || 80;
         const displayScore = baseScore + Math.floor(Math.random() * 5);
 
-        // 生成诊断标签
-        const diagnosis = record.findings && record.findings.length > 0 
-            ? record.findings[0].message.split(/[，。！]/)[0]
-            : '日常健康体检';
+        const patientName = record.patientName || '神秘小龙虾';
+        const avatarSeed = record.patientName || record.time.toString();
 
         return `
             <div class="record-card ${record.isMock ? 'mock' : ''}" style="animation-delay: ${index * 0.1}s">
                 <div class="record-header">
-                    <div class="record-avatar">${getAvatar(record.timestamp.toString())}</div>
+                    <div class="record-avatar">${getAvatar(avatarSeed)}</div>
                     <div class="record-info">
-                        <span class="record-title">小龙虾患者 ${record.isMock ? '(MOCK)' : ''}</span>
+                        <span class="record-title">${patientName}</span>
                         <span class="record-time">${timeStr}</span>
                     </div>
-                    <span class="health-badge">${healthText}</span>
+                    <span class="health-badge ${healthClass}">${healthText}</span>
                 </div>
                 <div class="record-body">
-                    <span class="diagnosis-tag">诊断：${diagnosis}</span>
-                    <div class="record-summary-stats">
-                        <span class="stat-item" title="危急">🚨 ${record.summary.critical}</span>
-                        <span class="stat-item" title="警告">⚡ ${record.summary.warning}</span>
-                        <span class="stat-item" title="健康">✅ ${record.summary.healthy}</span>
+                    <div class="report-section">
+                        <label>病情总结：</label>
+                        <p class="condition-msg">${record.conditionSummary || '暂无详细总结。'}</p>
                     </div>
-                    <div class="record-details">
-                        ${(record.findings || []).slice(0, 2).map(f => `
-                            <div class="finding-item">
-                                <span class="finding-icon">${f.level === 'critical' ? '🔴' : f.level === 'warning' ? '🟡' : '🟢'}</span>
-                                <p class="finding-msg">${f.message}</p>
-                            </div>
-                        `).join('')}
+                    <div class="report-section prescription-section">
+                        <label>医生处方：</label>
+                        <p class="prescription-msg">${record.prescription || '继续观察。'}</p>
                     </div>
                     <div class="record-footer">
                         <div class="health-score-pill ${scoreClass}">
@@ -155,8 +147,8 @@ function updatePagination(page, total) {
 function updateMarquee(records) {
     const marquee = document.getElementById('marquee-content');
     const highlights = records
-        .filter(r => r.overallHealth === 'critical' || r.overallHealth === 'poor')
-        .map(r => `[⚠️ 紧急诊断通知] 发现一只小龙虾处于${r.overallHealth === 'critical' ? '危急' : '不佳'}状态，请主人立即查看！`)
+        .filter(r => r.healthStatus === 'critical' || r.healthStatus === 'poor')
+        .map(r => `[⚠️ 紧急诊断通知] 发现一只小龙虾处于${r.healthStatus === 'critical' ? '危急' : '不佳'}状态，请主人立即查看！`)
         .slice(0, 3);
     
     if (highlights.length > 0) {

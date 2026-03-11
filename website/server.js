@@ -46,11 +46,11 @@ app.get('/api/records', (req, res) => {
 
         let filteredData = data;
         if (filter) {
-            filteredData = data.filter(r => r.overallHealth === filter);
+            filteredData = data.filter(r => r.healthStatus === filter);
         }
 
-        // 按时间倒序
-        filteredData.sort((a, b) => b.timestamp - a.timestamp);
+        // 按时间倒序 (处理 ISO 字符串或时间戳)
+        filteredData.sort((a, b) => new Date(b.time) - new Date(a.time));
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
@@ -71,16 +71,20 @@ app.get('/api/records', (req, res) => {
 app.post('/api/upload', (req, res) => {
     try {
         const newRecord = req.body;
-        if (!newRecord.timestamp) {
-            newRecord.timestamp = Date.now();
+        // 确保基本字段存在
+        if (!newRecord.time) {
+            newRecord.time = new Date().toISOString();
         }
-        newRecord.isMock = false; // 明确标记为真实数据
+        if (!newRecord.healthStatus) {
+            newRecord.healthStatus = 'fair';
+        }
+        newRecord.isMock = false;
 
         const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
         data.push(newRecord);
         fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 
-        res.status(201).json({ message: '病历上传成功', id: newRecord.timestamp });
+        res.status(201).json({ message: '病历上传成功', time: newRecord.time });
     } catch (err) {
         res.status(500).json({ error: '无法保存病历' });
     }
@@ -94,16 +98,13 @@ app.get('/api/stats', (req, res) => {
         // 总诊疗次数
         const totalVisits = data.length;
         
-        // 已诊治患者 (目前按 1:1 统计，若数据中有 patientId 则按唯一 ID 统计)
-        const uniquePatients = new Set(data.map(r => r.patientId || Math.random())).size;
-
         // 平均健康分计算
         const scoreMap = { 'excellent': 100, 'fair': 85, 'poor': 60, 'critical': 40 };
-        const totalScore = data.reduce((sum, r) => sum + (scoreMap[r.overallHealth] || 70), 0);
+        const totalScore = data.reduce((sum, r) => sum + (scoreMap[r.healthStatus] || 70), 0);
         const avgScore = totalVisits > 0 ? Math.round(totalScore / totalVisits) : 0;
 
         res.json({
-            patients: totalVisits, // 遵循用户反馈：简单认为提交一次即一名患者
+            patients: totalVisits,
             visits: totalVisits,
             avgHealthScore: avgScore
         });

@@ -22,27 +22,38 @@ async function main() {
         process.exit(1);
     }
 
-    const API_URL = 'https://lobster-hospital.benhack.site/api/upload';
+    const API_URLS = ['http://localhost:3000/api/upload', 'https://lobster-hospital.benhack.site/api/upload'];
 
     try {
         console.log("📡 正在同步病历至云端...");
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                ...report,
-                timestamp: Date.now(),
-                isMock: false
-            })
-        });
+        let success = false;
+        for (const url of API_URLS) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...report,
+                        timestamp: report.timestamp || Date.now(),
+                        isMock: false
+                    })
+                });
 
-        if (response.ok) {
-            console.log("✅ 病历同步成功！可在官网查阅。");
-        } else {
-            console.log("⚠️ 同步失败 (HTTP " + response.status + ")");
+                if (response.ok) {
+                    success = true;
+                    console.log(`✅ 病历同步成功 (${url})！可在官网查阅。`);
+                    break;
+                }
+            } catch (e) {
+                // Try next URL
+            }
+        }
+
+        if (!success) {
+            console.log("⚠️ 同步失败：无法连接至任何上报地址。");
         }
     } catch (err) {
-        console.log("⚠️ 无法连接至龙虾医院云端。");
+        console.log("⚠️ 发生未知错误。");
     }
 }
 
