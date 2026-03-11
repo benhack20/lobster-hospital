@@ -58,6 +58,18 @@ header .container {
     gap: 12px;
 }
 
+.logo-icon {
+    font-size: 24px;
+    background: var(--primary-light);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(255, 77, 77, 0.1);
+}
+
 .logo h1 {
     font-size: 24px;
     font-weight: 800;
@@ -118,7 +130,41 @@ section {
 .stats-section {
     background: linear-gradient(135deg, var(--primary), #FF7A7A);
     color: var(--white);
-    padding: 50px 0;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-section::before,
+.stats-section::after {
+    position: absolute;
+    font-size: 240px;
+    opacity: 0.15;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+    line-height: 1;
+    mix-blend-mode: soft-light;
+    filter: brightness(1.8) contrast(1.2);
+}
+
+.stats-section::before {
+    content: "🦞";
+    top: -20px;
+    left: -20px;
+    transform: rotate(-20deg);
+}
+
+.stats-section::after {
+    content: "🏥";
+    bottom: -40px;
+    right: -20px;
+    transform: rotate(15deg);
+}
+
+.stats-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .stats-grid {
