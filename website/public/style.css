@@ -241,7 +241,7 @@ section {
     min-height: 400px;
 }
 
-/* ==================== 病历卡片完整样式恢复 ==================== */
+/* ==================== 病历墙与卡片样式 ==================== */
 .records-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -319,19 +319,18 @@ section {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* 内容区域 */
 .record-body {
-    padding: 22px;
+    padding: 22px 22px 10px 22px;
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 15px;
+    gap: 12px;
 }
 
 .report-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .report-section label {
@@ -356,12 +355,11 @@ section {
     color: #4A4A4A;
     line-height: 1.6;
     padding-left: 12px;
-    height: 90px;
+    height: 150px; /* 您要求的扩大后的高度 */
     overflow: hidden;
     position: relative;
 }
 
-/* 遮罩 */
 .condition-msg::after {
     content: "";
     position: absolute;
@@ -377,8 +375,9 @@ section {
     background: #F7F8FA;
     padding: 16px;
     border-radius: 14px;
-    height: 90px;
-    margin-top: auto;
+    height: 85px;
+    display: flex;
+    flex-direction: column;
 }
 
 .prescription-section label { color: var(--primary); }
@@ -389,16 +388,17 @@ section {
     color: #1A1A1A;
     font-weight: 600;
     margin-top: 4px;
-    line-height: 1.5;
+    line-height: 1.4;
+    overflow: hidden;
 }
 
-/* 底部状态 */
 .record-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 22px 20px 22px;
     border-top: 1px solid #F0F0F0;
+    margin-top: auto; /* 确保沉底 */
 }
 
 .health-score-pill {
@@ -425,7 +425,7 @@ section {
     transform: rotate(-10deg);
 }
 
-/* ==================== 模态框及其他 ==================== */
+/* ==================== 模态框样式 ==================== */
 .modal-overlay {
     position: fixed;
     top: 0;
