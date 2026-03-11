@@ -1,0 +1,413 @@
+下面这份是“基于真实安全事件与优化实践，为 `lobster-hospital` 设计的一套『自查+问诊+开药方』知识与流程框架”，你可以直接拿去落地到 skill 里。
+
+---
+
+## 一、总体思路：lobster-hospital 要“抓住哪些典型问题”
+
+从最近一轮 OpenClaw 安全预警、漏洞披露、优化教程和踩坑文里，可以归纳出几类高频、且**特别适合做成自动自查 skill** 的问题群：
+
+1. **安全高危（必须优先处理）**
+   - 网关暴露、认证配置错误
+   - CVE 级漏洞版本未打补丁（如 ClawJacked / WebSocket 劫持、本地端口一键接管等）[1][2]
+   - ClawHub 恶意 skill / 供应链投毒[3][4]
+   - API Key / 凭证泄露风险（明文配置、日志泄露）[5][6]
+   - 提示词注入 / 工具滥用（随意读文件、执行命令）[7]
+
+2. **性能与成本问题（持续“贫血”的龙虾）**
+   - 内存常年高位 / 上下文堆积不清理[8]
+   - Token 消耗过高，几小时烧掉几十上百美元[9][10]
+   - 网关延迟高、并发一上就崩[11]
+
+3. **安装、配置与版本升级问题（小白最常挂急诊）**
+   - Node 版本不对 / 依赖地狱 / Docker 配置问题[12]
+   - openclaw.json 配置 schema 不兼容、字段变更导致网关起不来[13]
+   - 升级之后工具权限被锁死或变“哑巴”（默认 profile 改为 messaging 等）[14]
+
+4. **通道与模型类问题**
+   - Gateway 1008/4008 断开（token 缺失或不匹配）[15]
+   - 模型 401/429（Key 错、余额不足、速率限制）[16]
+   - 本地模型 / 中转站配置错误导致“全系统都被拖慢”[8][11]
+
+`lobster-hospital` 这个 skill 的价值，就是：  
+**把这些“研究里已经给出答案的大坑”预埋成检查项和问诊逻辑，让龙虾自己体检+给建议。**
+
+---
+
+## 二、基于研究内容梳理的“体检项清单”（自检模块设计）
+
+下面这些是从各类安全指南、性能优化文和故障排查文里抽出来，最适合由 skill 自动执行或辅助执行的检查项。
+
+### 1. 环境与版本体检
+
+**要查什么：**
+
+- Node.js 版本：是否 ≥ 22（官方/教程强烈推荐）[12]
+- OS 与架构：内存、CPU 是否满足至少 2C/4G（生产建议 4C/8G+）[11][17]
+- OpenClaw 版本：
+  - 是否低于已披露 CVE 修复版本（如要求 ≥ 2026.2.25 修补 ClawJacked 网关 RCE 漏洞）[1][2]
+  - 是否在近期有重大安全补丁的版本段内（2026.2.x 多次紧急修复）[2][18]
+
+**在 skill 里如何用：**
+
+- 通过 `exec` 工具调用：
+  - `node -v`
+  - `openclaw --version`
+- 调用 `openclaw doctor --json`，解析其中的 version / env 字段[19]。
+- 规则：
+  - 若 Node < 22 → 标记为 **性能+兼容性警告**；
+  - 若版本 < 官方建议修补版本 → 标记为 **高危：含已公开漏洞未修补**，强烈建议升级。
+
+---
+
+### 2. 配置与网关暴露安全（最关键的“锁门”检查）
+
+研究与预警反复强调：**大量事故来自默认或错误配置导致的“裸奔”**[1][2][6][20]。
+
+**要查什么：**
+
+1. **gateway.host 与绑定地址**
+   - 若 `gateway.host` = `0.0.0.0` 且处于公网环境 → 极高风险[6][20]；
+   - 若无任何认证/防护 → 任意人可接管 agent。
+
+2. **gateway 认证与 token**
+   - 是否启用 token 鉴权；
+   - 是否使用默认/弱 token；
+   - 是否启用控制面板“无 token 访问”。
+
+3. **Browser / 自动化端口暴露**
+   - 浏览器 WebSocket、VNC、noVNC 等端口是否对公网开放，未加保护[2][6]。
+
+**skill 中的实现路径：**
+
+- 调 `openclaw security audit --json`，其中有：
+  - 是否存在 `gateway_public_exposed`、`insecure_debug_flags` 等标记[21]；
+- 辅助读取 `~/.openclaw/openclaw.json`（注意脱敏），检查：
+  - `gateway.host`
+  - `gateway.auth` / `gateway.token` / `controlUi.allowInsecureAuth` 等字段[22]。
+- 根据检查结果输出“医生诊断”：
+  - 例如：  
+    - **诊断1：网关正暴露在公网且缺乏强认证**  
+      - 证据：`gateway.host=0.0.0.0`，`security audit` 标记 high risk。  
+      - 处方：建议修改为 `127.0.0.1`，或仅暴露在内网；在外层配反代+WAF；执行：
+        ```bash
+        openclaw security audit --fix
+        openclaw doctor --fix
+        ```
+  
+---
+
+### 3. CVE 与安全补丁情况（版本自查）
+
+相关研究与新闻多次指出 2026 年以来 OpenClaw 出现一系列高危 CVE，比如：
+
+- ClawJacked：本地 WebSocket 被任意网页一键接管，进而 RCE / Token 窃取[1][2]；
+- 多个 WebSocket / OAuth 相关认证绕过漏洞[23][24]；
+- 配置完整性问题导致安全选项在校验失败时“悄悄退回不安全默认”[25]。
+
+**skill 可以做的：**
+
+- 根据 `openclaw --version` 与已知“最低安全版本”对比（在 skill 中维护一个简单的版本 → 风险级别表）：
+  - 若版本 < 2026.2.25：  
+    - **诊断：当前版本可能受 ClawJacked 等高危漏洞影响**；
+  - 若在某些已知有配置回退 bug 的版本段：
+    - 提示：需要特别检查安全相关字段是否生效。
+
+---
+
+### 4. Skill / ClawHub 供应链投毒检查
+
+各大安全公司与博客披露：  
+
+- ClawHub 上曾被发现数百到上千个恶意 skills（ClawHavoc 供应链攻击等），部分专门窃取密钥、下载后门程序、部署挖矿[3][4][26]。
+- 安全最佳实践建议：企业环境**禁止直接访问 ClawHub**，或只用自建“白名单 skill 仓库”[27]。
+
+**skill 中可做的自查逻辑：**
+
+- 列出当前安装的 community skills（调用 `openclaw skills list` 或扫描 `~/.openclaw/skills`）；
+- 针对敏感关键词简单 heuristic：
+  - 名称 / 描述中含有“wallet / crypto / shell / root / admin-only”等；
+  - 来源非官方 / 无签名 / 无文档。
+- 若检测到来自 ClawHub 且未知来源、近期安装的技能：
+  - **诊断：存在潜在供应链风险的技能**
+  - 处方建议：
+    - 推荐将不明来源技能移除或禁用；
+    - 引导用户参考“只从可信清单安装技能”的做法；
+    - 给出简单命令示例：
+      ```bash
+      openclaw skills disable <skill-name>
+      ```
+
+> 高级版可以接入外部“技能黑名单清单”，但 v1 可以先做规则+人工判断提示。
+
+---
+
+### 5. 凭证与 API Key 安全自查
+
+多篇安全指南指出：**OpenClaw 的 API Key、OAuth Token 等很容易因为配置习惯和日志而泄露**[5][6][28]。
+
+**推荐的 skill 检查点：**
+
+1. **明文凭证位置**：
+   - `openclaw.json`、`auth-profiles.json` 中是否直接出现 `sk-`、`AKIA` 等典型 key 前缀；
+   - `.env` 是否被误纳入工作空间或日志中。
+
+2. **日志泄露风险**：
+   - 检查 `~/.openclaw/logs/*.log` 中是否包含类似密钥模式（只做采样+脱敏正则检查）；
+   - 注意与近期 bug 对应：老版本 `doctor` / 日志导出曾经泄露过敏感字段[19][29]。
+
+3. **建议行为**：
+   - 将 Key 迁移到环境变量或外部密钥管理（如 1Password、Vault 等）[5][28]；
+   - 启用最新版中提供的“日志脱敏”、“OTEL 导出前自动 redact”等特性[18]。
+
+**skill 输出方式**：
+
+- 用“医生口吻”解释：
+  - 你的“血型卡”（API Key）现在是写在门口白板上（配置明文）；
+  - 建议收进保险柜（环境变量 / 密钥管理服务）。
+
+---
+
+### 6. 提示词注入与工具滥用自查
+
+研究与官方 RFC 指出：OpenClaw 非常容易受提示词注入影响，尤其是当 agent 拥有**真实文件系统、命令行和网络工具**时[7][30]。
+
+**skill 可检查的点：**
+
+1. 工具权限：
+   - `tools.fs.workspaceOnly` 是否为 `true`（推荐）[31]；
+   - `exec` 工具是否在面向公网的 agent 中启用；
+   - sandbox.mode 是否为 `non-main` 或 `all`，而不是关闭沙箱[31][32]。
+
+2. 浏览器访问策略：
+   - SSRF 策略是否为安全默认（例如更新后改为 `trusted-network`）[18]；
+   - 是否允许任意网页执行带有“读本地文件”的指令。
+
+3. 长期记忆 / RAG 设置：
+   - 是否将未经筛查的外部内容自动写入长期记忆，再被后续指令调用——这是提示注入的“持久化形态”[30]。
+
+**skill 里的引导方式：**
+
+- 当检测到：
+  - `tools.fs.workspaceOnly = false` 且 `sandbox.mode = main` 且 agent 面向公网；
+- 输出：
+  - **诊断：文件系统与执行工具权限过大，非常容易被提示注入劫持做危险操作**；
+  - 给出参考配置：
+    ```jsonc
+    {
+      "tools": {
+        "fs": { "workspaceOnly": true },
+        "exec": { "enabled": false }
+      },
+      "sandbox": { "mode": "non-main" }
+    }
+    ```
+- 同时建议用户配合“提示注入防护 skill / 模板”：对外部网页内容在调用工具前做二次审查。
+
+---
+
+### 7. 性能与 Token 消耗自查
+
+多篇实践文和官方/社区指南都点出：**OpenClaw 默认就很“能吃”，如果不调优，会产生巨额 token 和内存成本**[8][9][10][33]。
+
+**skill 建议做的检查项：**
+
+1. **上下文与 TTL 策略**
+   - 是否使用默认长 TTL（如 1 小时甚至更久）导致无效对话堆积[8]；
+   - 是否启用自动压缩（/compact）、分会话（/new）、重置话题（/reset 等）[34][35]。
+
+2. **模型路由配置**
+   - 是否所有任务都用最贵模型（如 GPT-4/Claude Opus）[9][33]；
+   - 是否有根据任务类型拆分：重推理 / 轻问答 / 日常操作 / 本地模型等。
+
+3. **本地模型与缓存**
+   - 是否使用 Ollama / 本地 LLM 处理大量轻量任务[9][33]；
+   - 是否启用 provider 的 prompt caching / 本地缓存策略[33]。
+
+4. **监控与报表**
+   - 是否使用 token 使用情况统计（如社区的 model-usage skill 等）[36]；
+   - 是否设置“每月/每天 token 上限预警”。
+
+**skill 输出的“体检报告”可以包含：**
+
+- 抓出典型浪费点，比如：
+  - 每次都带一整份项目历史（数万 token）去问一个小问题；
+  - 日常 chat 也走最贵模型；
+- 然后给出 3–5 条高收益建议，并链接到具体配置样例。
+
+---
+
+### 8. 运行健康与错误模式自查
+
+从故障排查文章里可以整理出一套**错误模式 → 诊断 → 命令**的 mapping，非常适合变成 skill 的“症状识别”部分[15][16][37]。
+
+示例：
+
+| 症状 / 错误码 | 可能原因 | 建议检查与命令 |
+| --- | --- | --- |
+| WebSocket `1008`：policy violation / device identity required | gateway token 缺失或不匹配[15] | `openclaw doctor --generate-gateway-token`，重启 gateway；重新在 Dashboard/TUI 里粘贴含 token 链接 |
+| WebSocket `4008`：Connect failed / Auth failed | 设备 token 过期，或 Dashboard 存了旧 token[15] | 使用 `openclaw dashboard --no-open` 生成新 token 链接；更新浏览器保存的 token |
+| HTTP `401`：authentication_error: Invalid bearer token | 模型 API Key 错、被吊销或权限不足[16][38] | 检查 `openclaw models auth setup-token`；确认 Key 来源与权限 |
+| HTTP `429`：rate_limit_error | 模型提供方速率限制 / 额度不足[16][39] | 降低并发、调整重试间隔；使用 fallback 模型；或增加订阅额度 |
+| `MODULE_NOT_FOUND` / `@openclaw/core` 找不到 | Node 版本不合要求 / 依赖安装失败[12] | 使用 nvm 切到 Node 22+；重装依赖；检查网络或镜像 |
+
+**skill 层实现：**
+
+- 在自检时抓取最近日志（按时间窗口、只看 ERROR / WARN 行），抽取常见错误模式；
+- 将这些模式映射到“医生诊断条目”：
+  - 例如：“你最近反复出现 1008/4008 错误，这通常意味着网关 token 有问题。请按以下步骤操作……”。
+
+---
+
+## 三、结合这些检查项，为 lobster-hospital 设计的“问诊流程骨架”
+
+你可以按下面的结构，把上面那些研究结论串起来：
+
+### 第 0 步：告知用户“我要做的检查”
+
+- 用拟人化但清晰的语言说明：
+  - 将会做环境、配置、安全、性能、自述症状等几类检查；
+  - 大约耗时范围（例如几十秒内）。
+
+### 第 1 步：静默体检（自动命令）
+
+- 依次调用：
+  - `openclaw doctor --json`
+  - `openclaw security audit --json`
+  - （可选）`openclaw health --json` 或 `gateway status --json`
+- 补充：
+  - 读取 `~/.openclaw/openclaw.json`（脱敏）；
+  - 抽样最近 24 小时日志，看 top error 类型。
+- 将原始结果映射到前面定义的统一 Schema（env / config / security / logs / perf）。
+
+### 第 2 步：问诊（收集主诉）
+
+结合研究中常见抱怨，建议问：
+
+1. “你最近主要用龙虾干什么？（闲聊 / 写代码 / 自动化脚本 / 客服 / 运营 等）”
+2. “你最烦的是哪一类问题？（报错多 / 变慢 / 有安全担心 / 升级后乱套）”
+3. “有没有遭遇过『删错东西』或『自动乱干活』的情况？”（对应误操作风险预警[1]）
+4. “你是本地部署、Docker 还是云服务器？是否暴露在公网？”（影响安全判断）
+
+skill 把这些问诊内容存进 `user_feedback`，供后续诊断加权。
+
+### 第 3 步：诊断（映射到问题清单）
+
+结合：
+
+- 体检结果（命令输出 + 配置）；
+- 用户主诉；
+- 安全与性能最佳实践；
+
+生成一个按严重程度排序的问题列表，例如：
+
+1. **严重**：网关在公网裸奔，无认证 + 漏洞版本；
+2. **严重**：发现疑似恶意/未知来源的敏感技能；
+3. **警告**：Token 消耗过高，未启用模型路由与上下文压缩；
+4. **提示**：Node 版本偏低，未来可能遇到兼容性问题。
+
+每个问题包含：
+
+- 证据（来自哪些检查项）；
+- 可能后果（轻描淡写但讲清楚，如“可能被一键接管所有聊天记录和 API Key”）；
+- 恢复/加固步骤（可选自动命令 + 手动操作说明）。
+
+### 第 4 步：开处方与可选自动修复
+
+对“可安全自动修复”的项（例如运行 `doctor --fix`、`security audit --fix`），skill 可以：
+
+1. 明确列出将要执行的命令及其效果；
+2. 强制用户二次确认；
+3. 在执行前备份配置：
+   - 如复制 `openclaw.json` 为 `openclaw.json.bak-日期`；
+4. 执行后重新跑一次轻量自检，确认状态改善。
+
+高危变更（例如修改 gateway.host、禁用某些技能）建议**先只给命令建议与注意事项**，不直接改文件。
+
+### 第 5 步：生成“龙虾体检报告”
+
+参考前面建议的 Markdown 结构，包含：
+
+- 总体评分；
+- 严重/警告/提示问题列表；
+- 环境与版本摘要；
+- 安全与性能建议；
+- 便于复制到社区求助的“精简版摘要”。
+
+---
+
+## 四、总结：研究中哪些点最“适合”做成 lobster-hospital 引导
+
+归纳一下：下面这些是从现有安全预警、优化指南、避坑文中，**尤其适合**由 lobster-hospital 这个 skill 来做“自查+引导”的：
+
+1. **网关暴露与认证配置**（CNCERT 警示 + 多家安全厂商分析）  
+   → 自动检查 `gateway.host`、认证配置、端口暴露。
+
+2. **已知 CVE 漏洞版本与补丁**  
+   → 根据版本给出“你已经/尚未”修补的判断和升级警告。
+
+3. **ClawHub 恶意 skill 与供应链投毒**  
+   → 列出安装技能，结合简单规则/黑名单提示风险。
+
+4. **凭证管理与日志泄露**  
+   → 检测配置与日志里的潜在 Key；建议迁移到安全方式。
+
+5. **提示注入与工具权限**  
+   → 检查 sandbox / tools.fs / exec 配置是否稳健；给出安全模板。
+
+6. **性能与 Token 优化**  
+   → 针对 TTL、上下文长度、模型路由、本地模型使用等做配置体检并给出节省方案。
+
+7. **高频错误码与配置错误模式**  
+   → 1008/4008、401/429、依赖缺失等，从日志和 doctor 输出里自动匹配，并生成“专科医生级别”的解决步骤。
+
+这些内容都已经在公开文章、官方/社区文档和安全报告中被充分讨论，**你要做的不是再发明一套解决方案，而是把它们变成一个龙虾能自己执行的“诊疗流程”**：
+
+> 用户只需要会说一句：  
+> “龙虾医院帮我看看，我家龙虾最近是不是有点危险/有点笨/有点慢。”  
+> 剩下的就交给 lobster-hospital skill 去“查体+问诊+开药方”了。
+
+如果你愿意，下一步我可以帮你把上面的**诊断规则表 & SKILL.md 前置元数据**写成接近可直接落地的模板。  
+
+---
+
+**References**
+
+[1] 国家互联网应急中心发布关于OpenClaw安全应用的风险提示. <http://www.news.cn/tech/20260311/6bdfd2fffddf4a7397017d76c6d8306a/c.html>  
+[2] OpenClaw Gateway现高危漏洞预警. <https://new.qq.com/rain/a/20260302A03P3900>  
+[3] ClawHavoc Poisons OpenClaw's ClawHub With 1,184 Malicious Skills. <https://cyberpress.org/clawhavoc-poisons-openclaws-clawhub-with-1184-malicious-skills/>  
+[4] Hundreds of Malicious Skills Found in OpenClaw's ClawHub. <https://www.esecurityplanet.com/threats/hundreds-of-malicious-skills-found-in-openclaws-clawhub/>  
+[5] OpenClaw Security Guide 2026. <https://contabo.com/blog/openclaw-security-guide-2026/>  
+[6] OpenClaw security 101: Vulnerabilities & hardening (2026). <https://adversa.ai/blog/openclaw-security-101-vulnerabilities-hardening-2026/>  
+[7] The OpenClaw Prompt Injection Problem. <https://www.penligent.ai/hackinglabs/es/the-openclaw-prompt-injection-problem-persistence-tool-hijack-and-the-security-boundary-that-doesnt-exist/>  
+[8] OpenClaw 性能优化实战：如何降低56% 内存占用并提升响应速度. <https://cloud.tencent.com/developer/article/2634723>  
+[9] 运行 OpenClaw 的真实成本:月开销控制在 100 美元以内的实用指南. <http://k.sina.com.cn/article_7857201856_1d45362c0019032l9w.html>  
+[10] Token 消耗降低90%：OpenClaw 性能调优与降本实战指南. <https://zhuanlan.zhihu.com/p/2004224376657159734>  
+[11] OpenClaw 性能调优实战：如何低成本解决响应延迟与高并发瓶颈？ <https://cloud.tencent.com/developer/article/2634726>  
+[12] OpenClaw 本地部署报错解决与避坑指南 (2026版). <https://cloud.tencent.com/developer/article/2634682>  
+[13] Configuration - OpenClaw Docs. <https://docs.openclaw.ai/gateway/configuration>  
+[14] awesome-openclaw-tutorial (版本踩雷说明). <https://github.com/xianyu110/awesome-openclaw-tutorial>  
+[15] OpenClaw Gateway Connection Errors: Diagnosis & Fix Guide. <https://clawtank.dev/blog/openclaw-gateway-connection-errors>  
+[16] OpenClaw API key error and rate limiting troubleshooting guide. <https://aifreeapi.com/en/posts/openclaw-api-key-error-troubleshooting-guide>  
+[17] 2026 OpenClaw Resource Analysis. <https://macpdf.com/en/blog/articles/openclaw-2026-cpu-memory-io-consumption-analysis/openclaw-2026-cpu-memory-io-consumption-analysis.html>  
+[18] OpenClaw 2026.2.23 版本发布:安全更新与AI新功能全面升级. <https://new.qq.com/rain/a/20260225A01WTZ00>  
+[19] OpenClaw Doctor Command: Complete Guide to Every Flag and Fix. <https://clawtank.dev/blog/openclaw-doctor-command-guide>  
+[20] Over 220,000 OpenClaw Instances Exposed to the Internet. <https://www.penligent.ai/hackinglabs/over-220000-openclaw-instances-exposed-to-the-internet-why-agent-runtimes-go-naked-at-scale/>  
+[21] Security - OpenClaw Docs. <https://docs.openclaw.ai/gateway/security>  
+[22] docs/gateway/configuration-reference.md. <https://fossies.org/linux/openclaw/docs/gateway/configuration-reference.md>  
+[23] CVE-2026-25253 漏洞分析. <https://github.com/Joseph19820124/openclaw-vuln-report>  
+[24] CVE-2026-28477: OpenClaw OAuth Bypass Vulnerability. <https://www.sentinelone.com/vulnerability-database/cve-2026-28477/>  
+[25] Config validation failure silently drops security settings. <https://github.com/openclaw/openclaw/issues/5052>  
+[26] OpenClaw's 230 Malicious Skills: What Agentic AI Supply Chains Reveal. <https://www.authmind.com/post/openclaw-malicious-skills-agentic-ai-supply-chain>  
+[27] OpenClaw ClawHub: The 2026 Security-First Guide to Agent Skills. <https://advenboost.com/en/clawhub/>  
+[28] Keep your API keys safe in OpenClaw: A guide to secrets. <https://lumadock.com/tutorials/openclaw-secrets-management>  
+[29] CRITICAL: Config secrets exposed in JSON after update/doctor. <https://github.com/openclaw/openclaw/issues/9627>  
+[30] OpenClaw security: architecture and hardening guide. <https://nebius.com/blog/posts/openclaw-security>  
+[31] OpenClaw Docker: Hardening Your AI Sandbox for Production (2026). <https://advenboost.com/openclaw-docker-hardening-your-ai-sandbox-for-production-2026/>  
+[32] [Security] Default Safety Posture: Sandbox & Session Isolation. <https://github.com/openclaw/openclaw/issues/7827>  
+[33] How to Optimize OpenClaw: Memory, Concurrency, and Context. <https://medium.com/@creativeaininja/how-to-optimize-openclaw-memory-concurrency-and-context-that-actually-works-84690c2de3d7>  
+[34] OpenClaw Tips - Reduce Token Usage and See Immediate Results. <https://www.tencentcloud.com/techpedia/142824>  
+[35] docs/tools/slash-commands.md. <https://fossies.org/linux/openclaw/docs/tools/slash-commands.md>  
+[36] 5 problems every OpenClaw user hits after setup. <https://www.byterover.dev/blog/5-problems-every-openclaw-user-hits-after-setup>  
+[37] How to Fix OpenClaw Errors: 15 Common Issues and Solutions. <https://apidog.com/blog/openclaw-troubleshooting-guide/>  
+[38] Fix OpenClaw Telegram Errors: 401, Silent Bots, and Pairing Failures. <https://www.stack-junkie.com/blog/fix-openclaw-telegram-errors>  
+[39] OpenClaw Error Troubleshooting Center: Complete Fix Guide. <https://aifreeapi.com/en/posts/openclaw-error-troubleshooting-center>
