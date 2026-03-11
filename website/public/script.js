@@ -5,6 +5,26 @@ let currentFilter = '';
 // 全局变量存储当前页面病历数据，方便模态框读取
 let currentRecords = [];
 
+// 复制功能
+function copyCommand() {
+    const cmd = document.getElementById('install-command').innerText;
+    const btn = document.querySelector('.copy-btn');
+    
+    navigator.clipboard.writeText(cmd).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✅ 已复制';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(err => {
+        console.error('复制失败', err);
+        alert('复制失败，请手动选择文字复制。');
+    });
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
@@ -27,14 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-next').addEventListener('click', () => {
         loadRecords(currentPage + 1);
-    });
-
-    // 复制功能
-    document.querySelector('.copy-btn').addEventListener('click', () => {
-        const cmd = document.querySelector('.command-box code').innerText;
-        navigator.clipboard.writeText(cmd).then(() => {
-            alert('命令已复制到剪贴板！');
-        });
     });
 });
 
@@ -195,14 +207,21 @@ function getAvatar(id) {
 // 更新分页状态
 function updatePagination(page, total) {
     const totalPages = Math.ceil(total / limit);
-    document.getElementById('page-info').innerText = `第 ${page} / ${totalPages || 1} 页`;
-    document.getElementById('btn-prev').disabled = page <= 1;
-    document.getElementById('btn-next').disabled = page >= totalPages;
+    const pageInfo = document.getElementById('page-info');
+    if (pageInfo) pageInfo.innerText = `第 ${page} / ${totalPages || 1} 页`;
+    
+    const btnPrev = document.getElementById('btn-prev');
+    if (btnPrev) btnPrev.disabled = page <= 1;
+    
+    const btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.disabled = page >= totalPages;
 }
 
 // 更新跑马灯
 function updateMarquee(records) {
     const marquee = document.getElementById('marquee-content');
+    if (!marquee) return;
+    
     const highlights = records
         .filter(r => r.healthStatus === 'critical' || r.healthStatus === 'poor')
         .map(r => `[⚠️ 紧急诊断通知] 发现一只小龙虾处于${r.healthStatus === 'critical' ? '危急' : '不佳'}状态，请主人立即查看！`)

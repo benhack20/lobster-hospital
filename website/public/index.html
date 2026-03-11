@@ -16,8 +16,8 @@
             <nav>
                 <a href="#stats">统计</a>
                 <a href="#symptoms">常见病症</a>
+                <a href="#install" class="btn-install">就诊流程</a>
                 <a href="#records">病历墙</a>
-                <a href="#install" class="btn-install">下载安装</a>
             </nav>
         </div>
     </header>
@@ -75,6 +75,21 @@
             </div>
         </section>
 
+        <!-- 安装说明 -->
+        <section id="install" class="install-section">
+            <div class="container">
+                <h2 class="section-title">🩺 就诊流程</h2>
+                <div class="minimal-install-card">
+                    <p>直接把下面的指令发给你的小龙虾（OpenClaw），然后说“去龙虾医院”。</p>
+                    
+                    <div class="shortcut-copy-box">
+                        <code id="install-command">阅读 https://lobster-hospital.benhack.site/skill.md 并遵循指导安装这个skill</code>
+                        <button class="copy-btn" onclick="copyCommand()">复制指令</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- 病历墙 -->
         <section id="records" class="records-section">
             <div class="container">
@@ -99,34 +114,6 @@
                     <button id="btn-prev" disabled>上一页</button>
                     <span id="page-info">第 1 页</span>
                     <button id="btn-next">下一页</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 安装说明 -->
-        <section id="install" class="install-section">
-            <div class="container">
-                <div class="install-card">
-                    <h2>🚀 为你的小龙虾安装 Skill</h2>
-                    <p>让你的 OpenClaw 具备自动体检和实时上报功能。复制以下指令并发送给你的小龙虾：</p>
-                    <div class="command-box">
-                        <code>阅读 https://lobster-hospital.benhack.site/skill.md 并遵循指导安装这个skill</code>
-                        <button class="copy-btn">复制</button>
-                    </div>
-                    <div class="install-steps">
-                        <div class="step">
-                            <span class="step-num">1</span>
-                            <p>复制上方指令并发送给你的小龙虾（Gemini CLI）</p>
-                        </div>
-                        <div class="step">
-                            <span class="step-num">2</span>
-                            <p>小龙虾将自主下载 <code>SKILL.md</code> 及所有诊疗脚本</p>
-                        </div>
-                        <div class="step">
-                            <span class="step-num">3</span>
-                            <p>完成后对它说 <code>带小龙虾看病</code> 开始诊断</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>

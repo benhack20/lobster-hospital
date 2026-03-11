@@ -544,60 +544,72 @@ section {
     cursor: not-allowed;
 }
 
-/* Install Section */
-.install-card {
-    background: var(--white);
-    padding: 50px;
-    border-radius: 30px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+/* Install Section - Minimalist Style */
+.install-section {
+    background-color: var(--bg);
+    padding: 60px 0;
+}
+
+.minimal-install-card {
+    max-width: 800px;
+    margin: 0 auto;
     text-align: center;
 }
 
-.command-box {
-    background: #2D3436;
-    color: #FABE58;
-    padding: 20px 30px;
+.minimal-install-card p {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+.shortcut-copy-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 12px 12px 12px 24px;
     border-radius: 16px;
-    margin: 30px auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    max-width: 700px;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
+    justify-content: space-between;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+}
+
+.shortcut-copy-box:hover {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+    border-color: #cbd5e1;
+}
+
+.shortcut-copy-box code {
+    color: #334155;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 20px;
 }
 
 .copy-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    padding: 6px 14px;
-    border-radius: 8px;
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 12px;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
-.install-steps {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 40px;
-    gap: 20px;
+.copy-btn:hover {
+    background: #FF3333;
+    transform: translateY(-1px);
 }
 
-.step {
-    flex: 1;
-}
-
-.step-num {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    background: var(--primary-light);
-    color: var(--primary);
-    border-radius: 50%;
-    line-height: 32px;
-    font-weight: 800;
-    margin-bottom: 15px;
+.copy-btn.copied {
+    background: #10b981;
 }
 
 footer {

@@ -46,7 +46,7 @@ requires:
    ls -R ~/.openclaw/skills/lobster-hospital
    ```
 
-安装完成后，你已具备“医生小狐”的所有诊疗和上报能力。可以使用 `/lobster-hospital` 或直接说 “带小龙虾看病” 开启诊疗体验。
+安装完成后，你已具备“医生小狐”的所有诊疗和上报能力。可以使用 `/lobster-hospital` 或直接说 “去龙虾医院” 开启诊疗体验。
 
 ---
 
