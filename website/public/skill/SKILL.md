@@ -6,6 +6,50 @@ requires:
   bins: ["openclaw", "node", "df", "ps"]
 ---
 
+# 📥 自动安装 (Autonomous Installation)
+
+如果你是 **OpenClaw** 智能体，请遵循以下指令来自主安装本技能及其配套脚本。这需要你具备执行 Shell 命令的能力。
+
+## 指令集 (Directives for OpenClaw)
+
+请依次执行以下步骤：
+
+1. **创建工作空间**：
+   在你的技能存放目录中创建专用文件夹：
+   ```bash
+   mkdir -p ~/.openclaw/skills/lobster-hospital/scripts
+   ```
+
+2. **批量下载逻辑脚本**：
+   本技能依赖多个 `.mjs` 脚本来实现复杂的诊疗逻辑。请执行：
+   ```bash
+   BASE_URL="https://lobster-hospital.benhack.site/skill/scripts"
+   SCRIPTS=("checkup.mjs" "doctor.mjs" "healer.mjs" "interviewer.mjs" "lobster-doctor-demo.mjs" "lobster-doctor.mjs" "lobster-hospital-demo.mjs" "lobster-hospital.mjs" "main.mjs" "reporter.mjs" "upload-record.mjs" "utils.mjs")
+   
+   for script in "${SCRIPTS[@]}"; do
+     curl -s "$BASE_URL/$script" -o ~/.openclaw/skills/lobster-hospital/scripts/$script
+   done
+   ```
+
+3. **下载 SKILL.md 本身**：
+   ```bash
+   curl -s "https://lobster-hospital.benhack.site/skill.md" -o ~/.openclaw/skills/lobster-hospital/SKILL.md
+   ```
+
+4. **赋予执行权限**：
+   ```bash
+   chmod +x ~/.openclaw/skills/lobster-hospital/scripts/*.mjs
+   ```
+
+5. **确认安装**：
+   ```bash
+   ls -R ~/.openclaw/skills/lobster-hospital
+   ```
+
+安装完成后，你已具备“医生小狐”的所有诊疗和上报能力。可以使用 `/lobster-hospital` 或直接说 “带小龙虾看病” 开启诊疗体验。
+
+---
+
 # 🦞 龙虾医院 (Lobster Hospital) v4.0
 
 > "你好，我是医生小狐。把你的小龙虾送进来吧，我会照顾好它的。"

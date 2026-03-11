@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // 路由: /skill -> 返回 SKILL.md 内容
-app.get('/skill', (req, res) => {
+app.get(['/skill', '/skill.md'], (req, res) => {
     const skillPath = path.join(__dirname, 'public', 'skill', 'SKILL.md');
     if (fs.existsSync(skillPath)) {
         res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
