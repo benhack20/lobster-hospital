@@ -319,6 +319,8 @@
       transition: all 0.3s;
       animation: slideIn 0.5s ease-out;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .record-card:hover {
@@ -369,6 +371,9 @@
 
     .record-body {
       padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .diagnosis-tag {
@@ -395,6 +400,7 @@
       align-items: center;
       padding-top: 1rem;
       border-top: 1px solid #eee;
+      margin-top: auto;
     }
 
     .health-score {
