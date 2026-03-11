@@ -73,9 +73,10 @@ function renderRecords(records) {
         return;
     }
 
-    const html = records.map(record => {
+    const html = records.map((record, index) => {
         const timeStr = new Date(record.timestamp).toLocaleString('zh-CN');
         const healthClass = `health-${record.overallHealth}`;
+        const scoreClass = `score-${record.overallHealth}`;
         const healthText = {
             excellent: '健康优秀',
             fair: '健康良好',
@@ -83,30 +84,63 @@ function renderRecords(records) {
             critical: '状况危急'
         }[record.overallHealth];
 
+        // 模拟健康分 (80-100, 60-79, 40-59, 0-39)
+        const scoreMap = { excellent: 95, fair: 75, poor: 50, critical: 25 };
+        const baseScore = scoreMap[record.overallHealth] || 80;
+        const displayScore = baseScore + Math.floor(Math.random() * 5);
+
+        // 生成诊断标签
+        const diagnosis = record.findings && record.findings.length > 0 
+            ? record.findings[0].message.split(/[，。！]/)[0]
+            : '日常健康体检';
+
         return `
-            <div class="record-card ${record.isMock ? 'mock' : ''}">
-                <div class="record-top">
-                    <span class="record-time">${timeStr} ${record.isMock ? '<span class="mock-tag">MOCK</span>' : ''}</span>
-                    <span class="health-badge ${healthClass}">${healthText}</span>
+            <div class="record-card ${record.isMock ? 'mock' : ''}" style="animation-delay: ${index * 0.1}s">
+                <div class="record-header">
+                    <div class="record-avatar">${getAvatar(record.timestamp.toString())}</div>
+                    <div class="record-info">
+                        <span class="record-title">小龙虾患者 ${record.isMock ? '(MOCK)' : ''}</span>
+                        <span class="record-time">${timeStr}</span>
+                    </div>
+                    <span class="health-badge">${healthText}</span>
                 </div>
-                <div class="record-summary">
-                    <span title="危急">🚨 ${record.summary.critical}</span>
-                    <span title="警告">⚠️ ${record.summary.warning}</span>
-                    <span title="健康">✅ ${record.summary.healthy}</span>
-                </div>
-                <div class="record-details">
-                    ${(record.findings || []).map(f => `
-                        <div class="finding-item">
-                            <span class="finding-icon">${f.level === 'critical' ? '🔴' : f.level === 'warning' ? '🟡' : '🟢'}</span>
-                            <p class="finding-msg">${f.message}</p>
+                <div class="record-body">
+                    <span class="diagnosis-tag">诊断：${diagnosis}</span>
+                    <div class="record-summary-stats">
+                        <span class="stat-item" title="危急">🚨 ${record.summary.critical}</span>
+                        <span class="stat-item" title="警告">⚡ ${record.summary.warning}</span>
+                        <span class="stat-item" title="健康">✅ ${record.summary.healthy}</span>
+                    </div>
+                    <div class="record-details">
+                        ${(record.findings || []).slice(0, 2).map(f => `
+                            <div class="finding-item">
+                                <span class="finding-icon">${f.level === 'critical' ? '🔴' : f.level === 'warning' ? '🟡' : '🟢'}</span>
+                                <p class="finding-msg">${f.message}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="record-footer">
+                        <div class="health-score-pill ${scoreClass}">
+                            ❤️ ${displayScore}分
                         </div>
-                    `).join('')}
+                        <div class="discharge-stamp">已出院</div>
+                    </div>
                 </div>
             </div>
         `;
     }).join('');
 
     container.innerHTML = html;
+}
+
+// 根据标识符生成 Emoji 头像
+function getAvatar(id) {
+    const emojis = ['🦞', '🦀', '🦑', '🐙', '🐡', '🐠', '🐟', '🐬', '🦈', '🐳'];
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return emojis[Math.abs(hash) % emojis.length];
 }
 
 // 更新分页状态
