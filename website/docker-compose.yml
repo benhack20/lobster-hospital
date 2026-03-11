@@ -1,0 +1,17 @@
+# website/docker-compose.yml
+version: '3.8'
+
+services:
+  lobster-hospital:
+    build: .
+    container_name: lobster-hospital-app
+    # 如果你想把宿主机的 80 端口直接给它（前提是宿主机没装 Nginx），
+    # 可以在这里改，比如 "80:3000"
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./data:/app/data  # 这样你的病历数据会永久存在宿主机，删容器也不会丢
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000

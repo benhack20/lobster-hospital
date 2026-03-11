@@ -1,0 +1,12 @@
+# website/.dockerignore
+node_modules
+npm-debug.log
+.git
+.gitignore
+.DS_Store
+*.md
+docs
+tests
+*.mjs
+# 排除 data 目录，防止宿主机的数据被镜像里的初始空数据覆盖（如果使用了卷挂载）
+# data
