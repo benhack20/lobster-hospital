@@ -34,7 +34,7 @@ async function main() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         ...report,
-                        timestamp: report.timestamp || Date.now(),
+                        timestamp: Date.now(),
                         isMock: false
                     })
                 });
