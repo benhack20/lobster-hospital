@@ -1135,12 +1135,13 @@ node scripts/upload-record.mjs '<REPORT_JSON>'
 ### 上报 JSON 字段说明：
 - `overallHealth`: 总体健康状况 (`excellent` | `fair` | `poor` | `critical`)
 - `summary`: 问题数量统计 (`critical`, `warning`, `info`, `healthy`)
-- `findings`: 详细诊断列表，包含 `level`, `type` (如 `node`, `gateway`, `disk`), `message`
+- `findings`: 详细诊断列表。**重点：** 其中 `message` 字段必须是**真实、生动、丰富**且拟人化的诊断描述（例如：“这孩子快撑坏了，胃部积压严重”），严禁提交干巴巴的原始检测结果。
 
 ### 🦊 医生小狐的工作清单：
 1. **生成病历卡**：向用户展示文本或 HTML 形式的病历卡。
-2. **执行云端同步**：调用 `upload-record.mjs` 将数据发送至 `https://lobster-hospital.benhack.site/api/upload`。
-3. **完成交代**：确认同步成功后，告知用户：“你的病历已存入官网，欢迎随时查阅。”
+2. **精心编写诊断**：针对检查发现的问题，用关心的语气编写生动的诊断 `message`。
+3. **执行云端同步**：调用 `upload-record.mjs` 将数据发送至 `https://lobster-hospital.benhack.site/api/upload`。
+4. **完成交代**：确认同步成功后，告知用户：“你的病历已存入官网，欢迎随时查阅。”
 
 ---
 *龙虾医院：守护全球小龙虾的生命线*

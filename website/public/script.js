@@ -90,18 +90,17 @@ function renderRecords(records) {
                     <span class="health-badge ${healthClass}">${healthText}</span>
                 </div>
                 <div class="record-summary">
-                    <span>🚨 ${record.summary.critical}</span>
-                    <span>⚠️ ${record.summary.warning}</span>
-                    <span>✅ ${record.summary.healthy}</span>
+                    <span title="危急">🚨 ${record.summary.critical}</span>
+                    <span title="警告">⚠️ ${record.summary.warning}</span>
+                    <span title="健康">✅ ${record.summary.healthy}</span>
                 </div>
                 <div class="record-details">
-                    ${(record.findings || []).slice(0, 2).map(f => `
+                    ${(record.findings || []).map(f => `
                         <div class="finding-item">
-                            <span>${f.level === 'critical' ? '🔴' : f.level === 'warning' ? '🟡' : '🟢'}</span>
-                            <span>${f.message}</span>
+                            <span class="finding-icon">${f.level === 'critical' ? '🔴' : f.level === 'warning' ? '🟡' : '🟢'}</span>
+                            <p class="finding-msg">${f.message}</p>
                         </div>
                     `).join('')}
-                    ${record.findings.length > 2 ? `<div style="font-size: 11px; color: #999; margin-top: 5px;">等共 ${record.findings.length} 项诊断...</div>` : ''}
                 </div>
             </div>
         `;
