@@ -221,18 +221,57 @@ function updatePagination(page, total) {
 function updateMarquee(records) {
     const marquee = document.getElementById('marquee-content');
     if (!marquee) return;
+
+    // 1. 扩充基础氛围内容池 (技术梗 + 医院日常)
+    const atmosphereMessages = [
+        "🏥 龙虾医院提醒您：定期检查 node_modules，防止小龙虾“过载”。",
+        "🚑 紧急通知：深海区域发现多起未捕获的异常错误，请相关开发者迅速定位！",
+        "🌡️ 今日水温：25.6℃ (适合 Node.js v20 以上的小龙虾生存)。",
+        "🧪 龙虾药房：最新补丁 `npm audit fix` 已上架，欢迎按需取用。",
+        "📢 预警：近期海域出现 Promise 内存泄漏，请主人加强 async/await 防护。",
+        "🌟 龙虾医院使命：让每一只代码小龙虾都活蹦乱跳，永不宕机！",
+        "🦀 小知识：适量的 `console.log` 有助于小龙虾排毒，但过多会导致“吐沫”过多。",
+        "🧬 基因工程：发现一只变异的 Bun 龙虾，运行速度提升了 300%！",
+        "🚿 卫生习惯：勤洗代码（Refactor），减少技术债务，小龙虾更长寿。",
+        "🛰️ 卫星监测：全球小龙虾健康指数正在稳步回升。",
+        "🛡️ 安全提示：发现非法 SQL 注入攻击海域，请加强防火墙围栏！",
+        "📊 实时播报：龙虾医院“在线问诊”功能已全面覆盖深海 5000 米区域。"
+    ];
+
+    const messages = [];
+
+    // 2. 紧急预警 (只取一条最紧急的)
+    const critical = records.find(r => r.healthStatus === 'critical' || r.healthStatus === 'poor');
+    if (critical) {
+        const name = critical.patientName || '神秘小龙虾';
+        const statusText = critical.healthStatus === 'critical' ? '危急' : '不佳';
+        messages.push(`[⚠️ 紧急预警] 发现“${name}”处于${statusText}状态，医疗组已介入！`);
+    }
+
+    // 3. 康复喜报 (随机取一条健康优秀的记录)
+    const healthyOnes = records.filter(r => r.healthStatus === 'excellent');
+    if (healthyOnes.length > 0) {
+        const luckyOne = healthyOnes[Math.floor(Math.random() * healthyOnes.length)];
+        messages.push(`[🎉 康复喜报] “${luckyOne.patientName || '小龙虾'}”各项指标恢复正常，准予出院！`);
+    }
+
+    // 4. 实时统计 (模拟)
+    const totalVisits = records.length;
+    messages.push(`[📈 实时简报] 本诊疗中心当前挂号数：${totalVisits} | 专家门诊排队中...`);
+
+    // 5. 随机抽取氛围内容
+    const randomBase = atmosphereMessages.sort(() => 0.5 - Math.random()).slice(0, 3);
     
-    const highlights = records
-        .filter(r => r.healthStatus === 'critical' || r.healthStatus === 'poor')
-        .map(r => `[⚠️ 紧急诊断通知] 发现一只小龙虾处于${r.healthStatus === 'critical' ? '危急' : '不佳'}状态，请主人立即查看！`)
-        .slice(0, 3);
-    
-    if (highlights.length > 0) {
-        marquee.innerText = highlights.join(' | ') + ' | ' + marquee.innerText;
+    // 最终组合 (去重并组合)
+    const finalContent = [...messages, ...randomBase];
+
+    if (finalContent.length === 0) {
+        marquee.innerText = "🏥 龙虾医院：守护代码海洋，守护每一只小龙虾的健康。 | 系统运行正常 🎉";
     } else {
-        marquee.innerText = "🏥 龙虾医院提醒您：定期体检，让您的小龙虾更健康！ | 实时上报系统已启动 | 官网部署成功 🎉";
+        marquee.innerText = finalContent.join(' | ');
     }
 }
+
 
 // 数值滚动动画
 function animateValue(id, start, end, duration) {
