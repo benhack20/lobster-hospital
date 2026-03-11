@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦞 龙虾医院 - 小龙虾健康监测官方平台</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <span class="emoji">🦞</span>
+                <h1>龙虾医院</h1>
+                <span class="tagline">你的 OpenClaw 小龙虾专科医生</span>
+            </div>
+            <nav>
+                <a href="#stats">统计</a>
+                <a href="#symptoms">常见病症</a>
+                <a href="#records">病历墙</a>
+                <a href="#install" class="btn-install">下载安装</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- 统计面板 -->
+        <section id="stats" class="stats-section">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-patients">--</div>
+                        <div class="stat-label">已诊治患者</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-visits">--</div>
+                        <div class="stat-label">总诊疗次数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-score">--</div>
+                        <div class="stat-label">平均健康分</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 跑马灯公告 -->
+        <div class="marquee-container">
+            <div class="marquee" id="marquee-content">
+                载入实时诊疗数据中...
+            </div>
+        </div>
+
+        <!-- 常见病症 -->
+        <section id="symptoms" class="symptoms-section">
+            <div class="container">
+                <h2 class="section-title">🏥 常见病症</h2>
+                <div class="symptoms-grid">
+                    <div class="symptom-card">
+                        <div class="symptom-icon">🌡️</div>
+                        <h3>体温偏低</h3>
+                        <p>Node.js 版本过老，需要及时“保暖”升级。</p>
+                    </div>
+                    <div class="symptom-card">
+                        <div class="symptom-icon">🏠</div>
+                        <h3>大门敞开</h3>
+                        <p>Gateway 配置不当导致公网暴露，极度危险。</p>
+                    </div>
+                    <div class="symptom-card">
+                        <div class="symptom-icon">🍽️</div>
+                        <h3>消化不良</h3>
+                        <p>磁盘空间占用过高，小龙虾撑得动弹不得。</p>
+                    </div>
+                    <div class="symptom-card">
+                        <div class="symptom-icon">👔</div>
+                        <h3>衣冠不整</h3>
+                        <p>文件权限过宽，隐私数据面临泄露风险。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 病历墙 -->
+        <section id="records" class="records-section">
+            <div class="container">
+                <div class="records-header">
+                    <h2 class="section-title">📋 实时病历墙</h2>
+                    <div class="filters">
+                        <select id="filter-health">
+                            <option value="">全部状态</option>
+                            <option value="excellent">健康优秀</option>
+                            <option value="fair">健康良好</option>
+                            <option value="poor">健康一般</option>
+                            <option value="critical">状况危急</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="records-container" class="records-grid">
+                    <!-- 动态加载 -->
+                </div>
+
+                <div class="pagination">
+                    <button id="btn-prev" disabled>上一页</button>
+                    <span id="page-info">第 1 页</span>
+                    <button id="btn-next">下一页</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 安装说明 -->
+        <section id="install" class="install-section">
+            <div class="container">
+                <div class="install-card">
+                    <h2>🚀 为你的小龙虾安装 Skill</h2>
+                    <p>让你的 OpenClaw 具备自动体检和实时上报功能。</p>
+                    <div class="command-box">
+                        <code>openclaw install https://lobster-hospital.benhack.site/skill</code>
+                        <button class="copy-btn">复制</button>
+                    </div>
+                    <div class="install-steps">
+                        <div class="step">
+                            <span class="step-num">1</span>
+                            <p>复制上方命令并在终端运行</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>
+                            <p>运行 <code>openclaw doctor</code> 开始诊断</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>
+                            <p>完成后病历将自动同步至本站</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 龙虾医院 | 守护全球小龙虾的健康</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

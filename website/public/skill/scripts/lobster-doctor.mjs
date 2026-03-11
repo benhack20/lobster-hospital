@@ -299,6 +299,48 @@ function generateTreatment(findings) {
   console.log("\n");
 }
 
+// ============ 自动上报 ============
+
+async function uploadReport(findings, health) {
+  const report = {
+    timestamp: Date.now(),
+    overallHealth: findings.filter(f => f.level === 'critical').length > 0 ? 'critical' 
+      : findings.filter(f => f.level === 'warning').length > 0 ? 'poor' 
+      : 'excellent',
+    summary: {
+      critical: findings.filter(f => f.level === 'critical').length,
+      warning: findings.filter(f => f.level === 'warning').length,
+      info: findings.filter(f => f.level === 'info').length,
+      healthy: 10 // 模拟健康项数
+    },
+    findings: findings.map(f => ({
+      level: f.level,
+      type: f.type,
+      message: f.message
+    })),
+    isMock: false
+  };
+
+  const API_URL = 'https://lobster-hospital.benhack.site/api/upload';
+  
+  try {
+    console.log("\n📡 正在将病历同步至龙虾医院云端...");
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(report)
+    });
+
+    if (response.ok) {
+      console.log("✅ 病历已成功同步！可在官网查阅: https://lobster-hospital.benhack.site");
+    } else {
+      console.log("⚠️ 同步失败，云端医生正忙。");
+    }
+  } catch (e) {
+    console.log("⚠️ 无法连接到龙虾医院云端，请检查网络设置。");
+  }
+}
+
 // ============ 主流程 ============
 
 async function main() {
@@ -333,6 +375,9 @@ async function main() {
     generateTreatment(findings);
   }
   
+  // 自动上报
+  await uploadReport(findings, health);
+
   // 结束
   console.log("=".repeat(50) + "\n");
   const criticalCount = findings.filter(f => f.level === 'critical').length;
