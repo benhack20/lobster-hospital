@@ -166,10 +166,6 @@ function showModal(index) {
             <h3>💊 医生处方建议</h3>
             <div class="modal-text-content prescription-highlight">${record.prescription || '继续观察。'}</div>
         </div>
-        <div class="modal-footer-stats">
-            <div class="stat-pill">系统版本：Node.js v22.0.0 (模拟)</div>
-            <div class="stat-pill">上报来源：OpenClaw Doctor</div>
-        </div>
     `;
 
     modal.classList.add('active');
@@ -178,9 +174,10 @@ function showModal(index) {
 // 根据标识符生成 Emoji 头像
 function getAvatar(id) {
     const emojis = ['🦞', '🦀', '🦑', '🐙', '🐡', '🐠', '🐟', '🐬', '🦈', '🐳'];
+    const s = String(id || '');
     let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < s.length; i++) {
+        hash = s.charCodeAt(i) + ((hash << 5) - hash);
     }
     return emojis[Math.abs(hash) % emojis.length];
 }

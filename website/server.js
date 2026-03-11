@@ -49,8 +49,12 @@ app.get('/api/records', (req, res) => {
             filteredData = data.filter(r => r.healthStatus === filter);
         }
 
-        // 按时间倒序 (处理 ISO 字符串或时间戳)
-        filteredData.sort((a, b) => new Date(b.time) - new Date(a.time));
+        // 按时间倒序 (从新到旧)
+        filteredData.sort((a, b) => {
+            const timeA = new Date(a.time).getTime();
+            const timeB = new Date(b.time).getTime();
+            return timeB - timeA;
+        });
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
@@ -71,10 +75,18 @@ app.get('/api/records', (req, res) => {
 app.post('/api/upload', (req, res) => {
     try {
         const newRecord = req.body;
-        // 确保基本字段存在
+        // 确保基本字段存在，存储为时间戳数字
         if (!newRecord.time) {
-            newRecord.time = new Date().toISOString();
+            newRecord.time = newRecord.timestamp || Date.now();
         }
+        
+        // 强制转换为数字（如果是 ISO 字符串则转为时间戳）
+        if (isNaN(newRecord.time)) {
+            newRecord.time = new Date(newRecord.time).getTime();
+        } else {
+            newRecord.time = Number(newRecord.time);
+        }
+
         if (!newRecord.healthStatus) {
             newRecord.healthStatus = 'fair';
         }
