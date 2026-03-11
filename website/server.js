@@ -13,7 +13,7 @@ const DATA_FILE = path.join(__dirname, 'data', 'records.json');
 app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 路由: /skill -> 返回 SKILL.md 内容
 app.get(['/skill', '/skill.md'], (req, res) => {
@@ -22,6 +22,7 @@ app.get(['/skill', '/skill.md'], (req, res) => {
         res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
         res.sendFile(skillPath);
     } else {
+        console.error('File not found:', skillPath);
         res.status(404).send('Skill description not found.');
     }
 });

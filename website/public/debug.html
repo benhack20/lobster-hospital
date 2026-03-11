@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 接口测试 - 龙虾医院</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .debug-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .debug-container { grid-template-columns: 1fr; }
+        }
+        .debug-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--secondary); color: var(--fair); }
+        .btn-outline { background: white; border: 2px solid #eee; color: var(--text-muted); }
+        
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn:active { transform: translateY(0); }
+
+        .preview-area {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            height: 300px;
+            margin-top: 15px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .log-item {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        .log-success { color: var(--excellent); }
+        .log-error { color: var(--critical); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🧪</span>
+                <h1>接口调试</h1>
+                <span class="tagline">测试 /api/upload 接口</span>
+            </div>
+            <nav>
+                <a href="index.html">返回医院首页</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="debug-container">
+            <!-- 左侧：表单输入 -->
+            <div class="debug-card">
+                <h2 style="margin-bottom: 20px;">🏥 录入新病历</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label>病虾姓名</label>
+                        <input type="text" id="patientName" placeholder="例如：元气波士顿" required>
+                    </div>
+                    <div class="form-group">
+                        <label>健康状态</label>
+                        <select id="healthStatus">
+                            <option value="excellent">健康优秀 (Excellent)</option>
+                            <option value="fair" selected>健康良好 (Fair)</option>
+                            <option value="poor">健康一般 (Poor)</option>
+                            <option value="critical">状况危急 (Critical)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>诊断总结</label>
+                        <textarea id="conditionSummary" placeholder="描述一下这只龙虾的系统状况..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>处方建议</label>
+                        <input type="text" id="prescription" placeholder="给它开点什么药方？">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="generateRandom()">🎲 随机一只</button>
+                        <button type="submit" class="btn btn-primary">🚀 发送数据</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 右侧：预览与日志 -->
+            <div class="debug-card">
+                <h2 style="margin-bottom: 20px;">🔍 实时预览 & 日志</h2>
+                
+                <label>待发送内容 (JSON)</label>
+                <div id="jsonPreview" class="preview-area">{}</div>
+
+                <label style="margin-top: 25px;">请求日志</label>
+                <div id="logArea" style="height: 150px; overflow-y: auto; background: #f9f9f9; border-radius: 12px; border: 1px solid #eee; margin-top: 10px;">
+                    <div class="log-item" style="color: #999;">等待发送请求...</div>
+                </div>
+                
+                <button class="btn btn-outline" style="margin-top: 15px; width: auto;" onclick="clearLogs()">清除日志</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const jsonPreview = document.getElementById('jsonPreview');
+        const logArea = document.getElementById('logArea');
+
+        // 随机数据池
+        const names = ["深海潜水员", "极客波士顿", "贪吃黑虎虾", "元气皮皮虾", "由于掉线而抑郁的小龙虾", "代码写得太烂而自责的虾"];
+        const statusList = ["excellent", "fair", "poor", "critical"];
+        const summaries = [
+            "它的内存占用竟然比它的体重还轻，跑起代码来像是在深海冲浪。",
+            "它的 Node.js 版本竟然是 v0.10.x，老得胡须都掉光了，走路瑟瑟发抖。",
+            "这个家伙把所有的 API Key 都写在了外壳上（README.md），全世界都知道它住哪了。",
+            "它最近胃口太好，日志目录塞了 10GB 的过期数据，已经撑得走不动道了。",
+            "配置中心丢了，现在的它空有一身肌肉，却连一句‘Hello World’都喊不出来。"
+        ];
+        const prescriptions = [
+            "建议立即进行‘断舍离’手术，清理那些僵尸日志。",
+            "赶紧穿上 v22.x 的新大衣，别再受冻了。",
+            "把门锁好！chmod 700 是你最后的遮羞布。",
+            "给它补充点新鲜血液（更新 API Key），它还能抢救一下。",
+            "状态满分，建议作为本院的‘健康形象大使’。"
+        ];
+
+        function updatePreview() {
+            const data = {
+                patientName: document.getElementById('patientName').value || "",
+                healthStatus: document.getElementById('healthStatus').value,
+                conditionSummary: document.getElementById('conditionSummary').value || "",
+                prescription: document.getElementById('prescription').value || "",
+                time: Date.now()
+            };
+            jsonPreview.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // 实时更新预览
+        form.addEventListener('input', updatePreview);
+
+        function generateRandom() {
+            document.getElementById('patientName').value = names[Math.floor(Math.random() * names.length)];
+            document.getElementById('healthStatus').value = statusList[Math.floor(Math.random() * statusList.length)];
+            document.getElementById('conditionSummary').value = summaries[Math.floor(Math.random() * summaries.length)];
+            document.getElementById('prescription').value = prescriptions[Math.floor(Math.random() * prescriptions.length)];
+            updatePreview();
+            addLog("🎲 已随机生成一份病历数据", "normal");
+        }
+
+        function addLog(msg, type) {
+            const item = document.createElement('div');
+            item.className = `log-item ${type === 'success' ? 'log-success' : (type === 'error' ? 'log-error' : '')}`;
+            const now = new Date().toLocaleTimeString();
+            item.innerHTML = `[${now}] ${msg}`;
+            logArea.prepend(item);
+        }
+
+        function clearLogs() {
+            logArea.innerHTML = '<div class="log-item" style="color: #999;">日志已清除</div>';
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = JSON.parse(jsonPreview.textContent);
+            
+            addLog(`正在发送 POST /api/upload...`, "normal");
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    addLog(`✅ 发送成功！服务器响应: ${result.message}`, "success");
+                } else {
+                    addLog(`❌ 发送失败 (${response.status}): ${result.error || '未知错误'}`, "error");
+                }
+            } catch (error) {
+                addLog(`🚨 网络请求异常: ${error.message}`, "error");
+            }
+        };
+
+        // 初始化预览
+        updatePreview();
+    </script>
+</body>
+</html>
