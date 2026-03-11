@@ -36,7 +36,6 @@ async function loadStats() {
         const res = await fetch('/api/stats');
         const data = await res.json();
         
-        animateValue('stat-patients', 0, data.patients, 1000);
         animateValue('stat-visits', 0, data.visits, 1000);
         animateValue('stat-score', 0, data.avgHealthScore, 1000);
     } catch (err) {
