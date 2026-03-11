@@ -1,0 +1,209 @@
+:root {
+  --primary: #ff4d4d;
+  --secondary: #ff9999;
+  --bg: #fff5f5;
+  --card: #ffffff;
+  --text: #333333;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #fff, var(--bg));
+  border-radius: 2rem;
+  margin-bottom: 3rem;
+  box-shadow: var(--shadow);
+}
+
+.logo {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 3.5rem;
+  color: var(--primary);
+  margin: 0.5rem 0;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.stats-badge {
+  display: inline-block;
+  background: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stats-badge span {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+/* CTA Box */
+.cta-section {
+  margin-top: 2rem;
+}
+
+.download-box {
+  background: #2d3436;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  display: inline-block;
+  text-align: left;
+  max-width: 100%;
+}
+
+.download-box h3 {
+  color: var(--secondary);
+  margin-top: 0;
+}
+
+code {
+  background: #000;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.5rem;
+  display: block;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 1rem 0;
+  word-break: break-all;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: #ccc;
+  text-align: center;
+}
+
+/* Features */
+.about {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.feature-card .icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Summary Cards (Waiting Room) */
+.waiting-room {
+  padding: 4rem 0;
+}
+
+.waiting-room h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.summary-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border-left: 6px solid var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.patient-emoji {
+  font-size: 2rem;
+}
+
+.patient-name {
+  font-weight: bold;
+  flex: 1;
+}
+
+.status-pill {
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+
+.status-pill.healthy {
+  background: #e1f5fe;
+  color: #03a9f4;
+}
+
+.status-pill.weak {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+.patient-message {
+  font-style: italic;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.card-footer {
+  font-size: 0.8rem;
+  color: #999;
+  text-align: right;
+}
+
+footer {
+  text-align: center;
+  padding: 4rem 0;
+  border-top: 1px solid #eee;
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+}
