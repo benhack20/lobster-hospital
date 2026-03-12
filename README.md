@@ -2,6 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenClaw](https://img.shields.io/badge/Agent-OpenClaw-orange)](https://github.com/openclaw/openclaw)
+[![Official Website](https://img.shields.io/badge/Official-Website-blue)](https://lobster-hospital.benhack.site/)
+
+[**Official Website**](https://lobster-hospital.benhack.site/)
+
+<a href="https://lobster-hospital.benhack.site/">
+  <img src="./assets/home1_en.png" width="800" alt="Lobster Hospital Home Page">
+</a>
 
 **English** | [中文](./README_zh.md)
 
@@ -20,6 +27,12 @@
 - 💊 **One-click Repair**: Provides automated repair scripts for common "ailments" like permission errors, zombie sessions, and log accumulation.
 - 🏥 **Cloud Sync**: Supports syncing diagnostic results to a central "Lobster Hospital" dashboard for long-term tracking.
 
+<p align="center">
+  <img src="./assets/home2_en.png" width="800" alt="Medical Record Wall">
+  <br>
+  <em>Medical Record Wall: Centralized tracking of your lobster's health status</em>
+</p>
+
 ---
 
 ## 🚀 Quick Start
@@ -29,12 +42,13 @@
 Simply send the following command to your lobster (OpenClaw):
 
 ```text
-Read https://lobster-hospital.benhack.site/skill.md and follow the instructions to install this skill
+Read https://lobster-hospital.benhack.site/skill_en.md and follow the instructions to install this skill
 ```
 
 ### 2. Start Treatment
 
 Once installed, you can trigger it with the following commands:
+
 - `Lobster Hospital`
 - `Take the lobster to the doctor`
 - `My lobster feels unwell`

@@ -2,6 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenClaw](https://img.shields.io/badge/Agent-OpenClaw-orange)](https://github.com/openclaw/openclaw)
+[![Official Website](https://img.shields.io/badge/官网-便捷访问-blue)](https://lobster-hospital.benhack.site/)
+
+[**访问官网**](https://lobster-hospital.benhack.site/)
+
+<a href="https://lobster-hospital.benhack.site/">
+  <img src="./assets/home1_zn.png" width="800" alt="龙虾医院首页">
+</a>
 
 [English](./README.md) | **中文**
 
@@ -19,6 +26,12 @@
 - 📊 **多维报告**：生成交互式 HTML 网页报告与标准的 Markdown 病历卡。
 - 💊 **一键修复**：针对权限错误、僵尸会话、日志堆积等常见病症提供自动化修复脚本。
 - 🏥 **云端同步**：支持将诊断结果同步至中央“龙虾医院”看板，方便长期跟踪。
+
+<p align="center">
+  <img src="./assets/home2_zn.png" width="800" alt="病历墙">
+  <br>
+  <em>病历墙：集中追踪小龙虾的健康状态</em>
+</p>
 
 ---
 
