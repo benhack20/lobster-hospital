@@ -41,7 +41,9 @@ const translations = {
         btnNext: "Next",
         pageInfo: "Page {page} / {total}",
         footerCopy: "© 2026 Lobster Hospital | Guarding the Health of Lobsters Worldwide",
-        footerRepo: "Open Source Repository",
+        footerRepo: "GitHub",
+        footerRepoIcon: '<svg style="vertical-align: middle; margin-right: 4px;" height="16" viewBox="0 0 16 16" width="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>',
+        footerRepoLink: "https://github.com/benhack20/lobster-hospital",
         footerAuthor: "Author: Xiaodao",
         footerDirector: "Xiaohongshu: Moli Lila",
         footerWelcome: "Welcome to Follow",
@@ -94,7 +96,9 @@ const translations = {
         btnNext: "下一页",
         pageInfo: "第 {page} / {total} 页",
         footerCopy: "© 2026 龙虾医院 | 守护全球小龙虾的健康",
-        footerRepo: "开源仓库",
+        footerRepo: "Gitee",
+        footerRepoIcon: '<svg style="vertical-align: middle; margin-right: 4px;" height="16" viewBox="0 0 1024 1024" width="16" fill="currentColor"><path d="M512 1024C230.4 1024 0 793.6 0 512S230.4 0 512 0s512 230.4 512 512-230.4 512-512 512z m259.2-569.6H480c-12.8 0-25.6 12.8-25.6 25.6v64c0 12.8 12.8 25.6 25.6 25.6h176c12.8 0 25.6 12.8 25.6 25.6v12.8c0 41.6-35.2 76.8-76.8 76.8h-240c-12.8 0-25.6-12.8-25.6-25.6V416c0-41.6 35.2-76.8 76.8-76.8h355.2c12.8 0 25.6-12.8 25.6-25.6v-64c0-12.8-12.8-25.6-25.6-25.6H416c-105.6 0-192 86.4-192 192v256c0 105.6 86.4 192 192 192h256c105.6 0 192-86.4 192-192v-153.6c0-12.8-12.8-25.6-25.6-25.6z"></path></svg>',
+        footerRepoLink: "https://gitee.com/xxdxxdxxd/lobster-hospital",
         footerAuthor: "作者：小道",
         footerDirector: "小红书：陌里里啦",
         footerWelcome: "欢迎关注",
@@ -131,8 +135,18 @@ function setLanguage(lang) {
             if (el.tagName === 'TITLE') {
                 document.title = translations[lang][key];
             } else {
-                el.innerText = translations[lang][key];
+                // Special case for footer repo with icon
+                if (key === 'footerRepo') {
+                    el.innerHTML = (translations[lang].footerRepoIcon || '') + translations[lang].footerRepo;
+                } else {
+                    el.innerText = translations[lang][key];
+                }
             }
+        }
+        
+        // Special case for links
+        if (key === 'footerRepo' && translations[lang].footerRepoLink) {
+            el.href = translations[lang].footerRepoLink;
         }
     });
 
