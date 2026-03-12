@@ -2,7 +2,7 @@ import { runCommand, OPENCLAW_DIR, redact, colors } from './utils.mjs';
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import path from 'path';
 
-// 模块化的查体引擎
+// Modular checkup engine
 const module = process.argv.find(a => a.startsWith('--module='))?.split('=')[1] || 'all';
 
 async function run() {
@@ -21,7 +21,7 @@ async function run() {
 
 function checkSecurity() {
   const findings = [];
-  // 1. 网关暴露检查
+  // 1. Gateway exposure check
   try {
     const auditOutput = runCommand('openclaw security audit --json', true);
     if (auditOutput && auditOutput.includes('{')) {
@@ -30,11 +30,11 @@ function checkSecurity() {
     }
   } catch (e) {}
 
-  // 2. 补丁版本检查
+  // 2. Patch version check
   try {
     const ocVer = runCommand('openclaw --version', true).trim();
     if (ocVer < '2026.2.25') {
-      findings.push({ severity: 'critical', title: '版本过期', detail: '存在高危漏洞 ClawJacked 风险' });
+      findings.push({ severity: 'critical', title: 'Version Outdated', detail: 'High-risk vulnerability ClawJacked risk exists' });
     }
   } catch (e) {}
 

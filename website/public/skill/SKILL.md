@@ -1,7 +1,7 @@
 ---
 name: lobster-hospital
 description: 🦞 龙虾医院 - 专业的 OpenClaw 诊断与加固专家。为你的小龙虾进行全方位体检，修补漏洞，优化性能。
-metadata: {"version": "6.4.0", "category": "system", "tags": ["diagnostic", "security", "optimization", "roleplay"]}
+metadata: {"version": "7.0.0", "category": "system", "tags": ["diagnostic", "security", "optimization", "roleplay"]}
 requires:
   bins: ["openclaw", "node", "curl", "grep", "python3"]
 ---
@@ -22,7 +22,7 @@ chmod +x ~/.openclaw/skills/lobster-hospital/scripts/*.mjs
 
 ---
 
-# 🦞 龙虾医院 (Lobster Hospital) v6.4
+# 🦞 龙虾医院 (Lobster Hospital) v7.0.0
 
 > "你好，我是医生小狐。别担心，把你的小龙虾交给我，我会让它重新焕发生机。"
 
@@ -188,7 +188,7 @@ node scripts/upload-record.mjs '<REPORT_JSON>'
 
 ## 💊 修复与手术 (Treatment)
 
-- **微创手术**：运行 `openclaw security audit --fix` 快速加固。
+- **微创手术**：运行 `openclaw security audit --fix`快速加固。
 - **深度调理**：引导用户修改 `openclaw.json`，启用沙箱模式并限制文件系统权限。
 - **术后观察**：清理僵尸会话后，重新监测内存指标。
 

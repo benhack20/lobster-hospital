@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦞 龙虾医院 - 小龙虾健康监测官方平台</title>
+    <title data-t="title">🦞 龙虾医院 - 小龙虾健康监测官方平台</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,20 +11,24 @@
         <div class="container">
             <div class="logo">
                 <span class="logo-icon">🦞</span>
-                <h1>龙虾医院</h1>
-                <span class="tagline">你的 OpenClaw 小龙虾专科医生</span>
+                <h1 data-t="hospitalName">龙虾医院</h1>
+                <span class="tagline" data-t="hospitalTagline">你的 OpenClaw 小龙虾专科医生</span>
             </div>
             <nav>
+                <div class="lang-switcher">
+                    <button id="lang-en" class="lang-btn">EN</button>
+                    <button id="lang-zh" class="lang-btn active">中文</button>
+                </div>
                 <button class="mobile-menu-toggle" id="menu-toggle" aria-label="切换菜单">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
                 <div class="nav-links" id="nav-links">
-                    <a href="#stats">统计</a>
-                    <a href="#symptoms">常见病症</a>
-                    <a href="#install" class="btn-install">就诊流程</a>
-                    <a href="#records">病历墙</a>
+                    <a href="#stats" data-t="navStats">统计</a>
+                    <a href="#symptoms" data-t="navSymptoms">常见病症</a>
+                    <a href="#install" class="btn-install" data-t="navInstall">就诊流程</a>
+                    <a href="#records" data-t="navRecords">病历墙</a>
                 </div>
             </nav>
         </div>
@@ -37,11 +41,11 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-value" id="stat-visits">--</div>
-                        <div class="stat-label">累计就诊虾次</div>
+                        <div class="stat-label" data-t="statTotalVisits">累计就诊虾次</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="stat-score">--</div>
-                        <div class="stat-label">平均健康分</div>
+                        <div class="stat-label" data-t="statAvgScore">平均健康分</div>
                     </div>
                 </div>
             </div>
@@ -49,7 +53,7 @@
 
         <!-- 跑马灯公告 -->
         <div class="marquee-container">
-            <div class="marquee" id="marquee-content">
+            <div class="marquee" id="marquee-content" data-t="marqueeDefault">
                 🏥 正在连接深海诊疗系统，同步实时健康数据... 🌊
             </div>
         </div>
@@ -57,27 +61,27 @@
         <!-- 常见病症 -->
         <section id="symptoms" class="symptoms-section">
             <div class="container">
-                <h2 class="section-title">🏥 常见病症</h2>
+                <h2 class="section-title" data-t="symptomsTitle">🏥 常见病症</h2>
                 <div class="symptoms-grid">
                     <div class="symptom-card">
                         <div class="symptom-icon">🌡️</div>
-                        <h3>体温偏低</h3>
-                        <p>Node.js 版本过老，需要及时“保暖”升级。</p>
+                        <h3 data-t="symptom1Title">体温偏低</h3>
+                        <p data-t="symptom1Desc">Node.js 版本过老，需要及时“保暖”升级。</p>
                     </div>
                     <div class="symptom-card">
                         <div class="symptom-icon">🏠</div>
-                        <h3>大门敞开</h3>
-                        <p>Gateway 配置不当导致公网暴露，极度危险。</p>
+                        <h3 data-t="symptom2Title">大门敞开</h3>
+                        <p data-t="symptom2Desc">Gateway 配置不当导致公网暴露，极度危险。</p>
                     </div>
                     <div class="symptom-card">
                         <div class="symptom-icon">🍽️</div>
-                        <h3>消化不良</h3>
-                        <p>磁盘空间占用过高，小龙虾撑得动弹不得。</p>
+                        <h3 data-t="symptom3Title">消化不良</h3>
+                        <p data-t="symptom3Desc">磁盘空间占用过高，小龙虾撑得动弹不得。</p>
                     </div>
                     <div class="symptom-card">
                         <div class="symptom-icon">👔</div>
-                        <h3>衣冠不整</h3>
-                        <p>文件权限过宽，隐私数据面临泄露风险。</p>
+                        <h3 data-t="symptom4Title">衣冠不整</h3>
+                        <p data-t="symptom4Desc">文件权限过宽，隐私数据面临泄露风险。</p>
                     </div>
                 </div>
             </div>
@@ -86,13 +90,13 @@
         <!-- 安装说明 -->
         <section id="install" class="install-section">
             <div class="container">
-                <h2 class="section-title">🩺 就诊流程</h2>
+                <h2 class="section-title" data-t="installTitle">🩺 就诊流程</h2>
                 <div class="minimal-install-card">
-                    <p>直接把下面的指令发给你的小龙虾（OpenClaw），然后说“去龙虾医院”。</p>
+                    <p data-t="installDesc">直接把下面的指令发给你的小龙虾（OpenClaw），然后说“去龙虾医院”。</p>
                     
                     <div class="shortcut-copy-box">
-                        <code id="install-command">阅读 https://lobster-hospital.benhack.site/skill.md 并遵循指导安装这个skill</code>
-                        <button class="copy-btn" onclick="copyCommand()">复制指令</button>
+                        <code id="install-command" data-t="installCommand">阅读 https://lobster-hospital.benhack.site/skill.md 并遵循指导安装这个skill</code>
+                        <button class="copy-btn" id="copy-btn-text" data-t="copyBtn" onclick="copyCommand()">复制指令</button>
                     </div>
                 </div>
             </div>
@@ -102,14 +106,14 @@
         <section id="records" class="records-section">
             <div class="container">
                 <div class="records-header">
-                    <h2 class="section-title">📋 实时病历墙</h2>
+                    <h2 class="section-title" data-t="recordsTitle">📋 实时病历墙</h2>
                     <div class="filters">
                         <select id="filter-health">
-                            <option value="">全部状态</option>
-                            <option value="excellent">健康优秀</option>
-                            <option value="fair">健康良好</option>
-                            <option value="poor">健康一般</option>
-                            <option value="critical">状况危急</option>
+                            <option value="" data-t="filterAll">全部状态</option>
+                            <option value="excellent" data-t="statusExcellent">健康优秀</option>
+                            <option value="fair" data-t="statusFair">健康良好</option>
+                            <option value="poor" data-t="statusPoor">健康一般</option>
+                            <option value="critical" data-t="statusCritical">状况危急</option>
                         </select>
                     </div>
                 </div>
@@ -119,9 +123,9 @@
                 </div>
 
                 <div class="pagination">
-                    <button id="btn-prev" disabled>上一页</button>
+                    <button id="btn-prev" disabled data-t="btnPrev">上一页</button>
                     <span id="page-info">第 1 页</span>
-                    <button id="btn-next">下一页</button>
+                    <button id="btn-next" data-t="btnNext">下一页</button>
                 </div>
             </div>
         </section>
@@ -129,15 +133,15 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 龙虾医院 | 守护全球小龙虾的健康</p>
+            <p data-t="footerCopy">&copy; 2026 龙虾医院 | 守护全球小龙虾的健康</p>
             <p class="footer-info">
-                <a href="https://gitee.com/xxdxxdxxd/lobster-hospital" target="_blank" class="footer-link">开源仓库 (Gitee)</a>
+                <a href="https://github.com/openclaw/lobster-hospital" target="_blank" class="footer-link" data-t="footerRepo">开源仓库</a>
                 <span class="separator">|</span>
-                <span class="author">作者：小道</span>
+                <span class="author" data-t="footerAuthor">作者：小道</span>
                 <span class="separator">|</span>
-                <a href="https://www.xiaohongshu.com/user/profile/64390df6000000000f005cd1" target="_blank" class="footer-link xiaohongshu">小红书：陌里里啦</a>
+                <a href="https://www.xiaohongshu.com/user/profile/64390df6000000000f005cd1" target="_blank" class="footer-link xiaohongshu" data-t="footerDirector">小红书：陌里里啦</a>
                 <span class="separator">|</span>
-                <span class="welcome">欢迎关注</span>
+                <span class="welcome" data-t="footerWelcome">欢迎关注</span>
             </p>
         </div>
     </footer>

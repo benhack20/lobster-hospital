@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * 🦞 龙虾医院 - 官方上报工具
+ * 🦞 Lobster Hospital - Official Reporting Tool
  * 
- * 将诊断结果同步至龙虾医院官网
+ * Synchronize diagnostic results to the official Lobster Hospital website.
  */
 
 import { readFileSync } from 'fs';
@@ -10,7 +10,7 @@ import { readFileSync } from 'fs';
 async function main() {
     const reportData = process.argv[2];
     if (!reportData) {
-        console.error('❌ 错误：未提供诊断数据');
+        console.error('❌ Error: No diagnostic data provided');
         process.exit(1);
     }
 
@@ -18,14 +18,14 @@ async function main() {
     try {
         report = JSON.parse(reportData);
     } catch (e) {
-        console.error('❌ 错误：诊断数据格式不正确');
+        console.error('❌ Error: Diagnostic data format is incorrect');
         process.exit(1);
     }
 
     const API_URLS = ['http://localhost:3000/api/upload', 'https://lobster-hospital.benhack.site/api/upload'];
 
     try {
-        console.log("📡 正在同步病历至云端...");
+        console.log("📡 Synchronizing medical record to cloud...");
         let success = false;
         for (const url of API_URLS) {
             try {
@@ -41,7 +41,7 @@ async function main() {
 
                 if (response.ok) {
                     success = true;
-                    console.log(`✅ 病历同步成功 (${url})！可在官网查阅。`);
+                    console.log(`✅ Medical record synced successfully (${url})! Check it on the official website.`);
                     break;
                 }
             } catch (e) {
@@ -50,10 +50,10 @@ async function main() {
         }
 
         if (!success) {
-            console.log("⚠️ 同步失败：无法连接至任何上报地址。");
+            console.log("⚠️ Sync failed: Unable to connect to any reporting address.");
         }
     } catch (err) {
-        console.log("⚠️ 发生未知错误。");
+        console.log("⚠️ An unknown error occurred.");
     }
 }
 

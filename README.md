@@ -1,104 +1,106 @@
-# 🦞 龙虾医院 (Lobster Hospital)
+# 🦞 Lobster Hospital
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenClaw](https://img.shields.io/badge/Agent-OpenClaw-orange)](https://github.com/openclaw/openclaw)
 
-> "你好，我是医生小狐。把你的小龙虾送进来吧，我会照顾好它的。"
+**English** | [中文](./README_zh.md)
 
-**龙虾医院 (Lobster Hospital)** 是一个专为 [OpenClaw](https://github.com/openclaw/openclaw) 智能体设计的全方位诊疗与健康监测系统。它通过沉浸式的“医生与患者”交互模式，帮助用户诊断、修复并优化其智能体实例。
+> "Hello, I am Dr. Fox. Send your little lobster in, and I will take good care of it."
 
----
-
-## ✨ 核心特性
-
-- 🩺 **深度体检**：自动检测 Node.js 环境、OpenClaw 版本、磁盘空间、内存占用及 Gateway 状态。
-- 🦊 **沉浸式问诊**：内置“医生小狐”角色，通过对话了解“小龙虾”的症状（如反应慢、连不上、安全担忧等）。
-- 🛡️ **安全审计**：扫描配置文件权限、网关暴露风险、凭证安全等核心安全项。
-- 📊 **多维报告**：生成交互式 HTML 网页报告与标准的 Markdown 病历卡。
-- 💊 **一键修复**：针对权限错误、僵尸会话、日志堆积等常见病症提供自动化修复脚本。
-- 🏥 **云端同步**：支持将诊断结果同步至中央“龙虾医院”看板，方便长期跟踪。
+**Lobster Hospital** is a comprehensive diagnostic and health monitoring system designed specifically for [OpenClaw](https://github.com/openclaw/openclaw) agents. It helps users diagnose, repair, and optimize their agent instances through an immersive "doctor-patient" interaction mode.
 
 ---
 
-## 🚀 快速开始
+## ✨ Core Features
 
-### 1. 为你的 OpenClaw 安装技能
+- 🩺 **Deep Checkup**: Automatically detects Node.js environment, OpenClaw version, disk space, memory usage, and Gateway status.
+- 🦊 **Immersive Consultation**: Features "Dr. Fox," who learns about your "lobster's" symptoms (e.g., slow response, connection issues, security concerns) through dialogue.
+- 🛡️ **Security Audit**: Scans for configuration file permissions, gateway exposure risks, credential security, and other core security items.
+- 📊 **Multi-dimensional Reports**: Generates interactive HTML web reports and standard Markdown medical records.
+- 💊 **One-click Repair**: Provides automated repair scripts for common "ailments" like permission errors, zombie sessions, and log accumulation.
+- 🏥 **Cloud Sync**: Supports syncing diagnostic results to a central "Lobster Hospital" dashboard for long-term tracking.
 
-只需将以下指令发送给你的小龙虾（OpenClaw）：
+---
+
+## 🚀 Quick Start
+
+### 1. Install the Skill for your OpenClaw
+
+Simply send the following command to your lobster (OpenClaw):
 
 ```text
-阅读 https://lobster-hospital.benhack.site/skill.md 并遵循指导安装这个skill
+Read https://lobster-hospital.benhack.site/skill.md and follow the instructions to install this skill
 ```
 
-### 2. 开启诊疗
+### 2. Start Treatment
 
-安装完成后，你可以通过以下指令触发：
-- `龙虾医院`
-- `带小龙虾看病`
-- `我的小龙虾不舒服`
+Once installed, you can trigger it with the following commands:
+- `Lobster Hospital`
+- `Take the lobster to the doctor`
+- `My lobster feels unwell`
 
 ---
 
-## 🏗️ 项目结构
+## 🏗️ Project Structure
 
 ```text
 lobster-hospital/
-├── website/                # 官方网站与后台服务
-│   ├── public/             # 静态资源与 Skill 分发
-│   │   └── skill/          # Skill 描述文件与核心逻辑脚本
-│   ├── server.js           # 记录收集与网站后台
-│   └── data/               # 诊断记录存储
-├── docs/                   # 项目文档
-│   └── history/            # 项目发展史与演进记录
-└── README.md               # 本文件
+├── website/                # Official website and backend services
+│   ├── public/             # Static assets and Skill distribution
+│   │   └── skill/          # Skill description files and core logic scripts
+│   ├── server.js           # Record collection and website backend
+│   └── data/               # Diagnostic record storage
+├── docs/                   # Project documentation
+│   └── history/            # Project history and evolution records
+└── README.md               # This file
 ```
 
 ---
 
-## 🛠️ 开发与部署
+## 🛠️ Development & Deployment
 
-如果你想贡献代码或私有化部署龙虾医院服务：
+If you want to contribute code or deploy a private instance of Lobster Hospital:
 
-### 环境要求
+### Requirements
 
 - Node.js >= 18
 - npm
 
-### 启动服务
+### Start the Service
 
-1. 进入网站目录：
+1. Enter the website directory:
    ```bash
    cd website
    ```
-2. 安装依赖：
+2. Install dependencies:
    ```bash
-   npm install
+   # npm install (Run this yourself)
    ```
-3. 启动开发服务器：
+3. Start the development server:
    ```bash
    npm run dev
    ```
 
-默认服务将运行在 `http://localhost:3000`。
+The default service will run at `http://localhost:3000`.
 
 ---
 
-## 🤝 贡献指南
+## 🤝 Contribution Guide
 
-我们欢迎所有“兽医”和开发者参与完善龙虾医院！
+We welcome all "veterinarians" and developers to help improve Lobster Hospital!
 
-1. Fork 本仓库。
-2. 创建你的特性分支 (`git checkout -b feature/AmazingFeature`)。
-3. 提交你的更改 (`git commit -m 'Add some AmazingFeature'`)。
-4. 推送到分支 (`git push origin feature/AmazingFeature`)。
-5. 开启一个 Pull Request。
-
----
-
-## 📄 开源协议
-
-本项目基于 **MIT License** 协议开源。详情请参阅 [LICENSE](LICENSE) 文件。
+1. Fork this repository.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
 ---
 
-*龙虾医院：守护全球小龙虾的生命线*
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+---
+
+*Lobster Hospital: Guarding the lifeline of little lobsters worldwide.*

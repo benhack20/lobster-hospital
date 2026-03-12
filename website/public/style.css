@@ -12,7 +12,7 @@
     --poor: #faad14;
     --critical: #f5222d;
 
-    /* 病历卡片专用 - 借鉴 demo-package */
+    /* Medical Record Card - Inspired by demo-package */
     --card-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
     --card-shadow: 0 10px 30px rgba(45, 52, 54, 0.08);
 }
@@ -87,6 +87,37 @@ header .container {
 nav {
     display: flex;
     align-items: center;
+    gap: 30px;
+}
+
+.lang-switcher {
+    display: flex;
+    gap: 5px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.lang-btn {
+    border: none;
+    background: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.lang-btn:hover {
+    color: var(--primary);
+}
+
+.lang-btn.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .nav-links {
@@ -154,7 +185,7 @@ nav {
 /* Sections */
 section {
     padding: 60px 0;
-    scroll-margin-top: 100px; /* 补偿吸顶 header 的高度 */
+    scroll-margin-top: 100px; /* Offset for sticky header height */
 }
 
 .section-title {
@@ -302,7 +333,7 @@ section {
     color: var(--text-muted);
 }
 
-/* Records Wall - 病历卡片部分借鉴 demo-package */
+/* Records Wall - Record card styles inspired by demo-package */
 .records-header {
     display: flex;
     justify-content: space-between;
@@ -325,7 +356,7 @@ section {
     min-height: 400px;
 }
 
-/* ==================== 病历墙与卡片样式 ==================== */
+/* ==================== Medical Records Wall & Card Styles ==================== */
 .records-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -343,8 +374,8 @@ section {
     border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    min-height: 320px; /* 最小高度 */
-    max-height: 500px; /* 最大高度 */
+    min-height: 320px; /* Min height */
+    max-height: 500px; /* Max height */
     cursor: pointer;
 }
 
@@ -410,7 +441,7 @@ section {
     flex-direction: column;
     flex: 1;
     gap: 12px;
-    overflow: hidden; /* 防止溢出 */
+    overflow: hidden; /* Prevent overflow */
 }
 
 .report-section {
@@ -442,31 +473,31 @@ section {
     line-height: 1.6;
     padding-left: 12px;
     display: -webkit-box;
-    -webkit-line-clamp: 5; /* 限制显示行数，可根据需要调整 */
+    -webkit-line-clamp: 5; /* Limit lines shown, adjust as needed */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 1.6em; /* 至少显示一行 */
+    min-height: 1.6em; /* Show at least one line */
 }
 
 .prescription-section {
     background: #F7F8FA;
-    padding: 10px 14px; /* 减小内边距 */
+    padding: 10px 14px; /* Reduced padding */
     border-radius: 12px;
-    min-height: 40px; /* 降低最小高度 */
+    min-height: 40px; /* Lowered min height */
     display: flex;
     flex-direction: column;
     margin-top: auto;
 }
 
-.prescription-section label { color: var(--primary); font-size: 12px; } /* 缩小标签字体 */
+.prescription-section label { color: var(--primary); font-size: 12px; } /* Smaller label font */
 .prescription-section label::before { background: var(--primary); height: 12px; }
 
 .prescription-msg {
-    font-size: 13px; /* 略微缩小文字 */
+    font-size: 13px; /* Slightly smaller text */
     color: #1A1A1A;
     font-weight: 600;
-    margin-top: 2px; /* 减小间距 */
+    margin-top: 2px; /* Reduced spacing */
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -479,9 +510,9 @@ section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0 10px 0; /* 调整内边距适应沉底 */
+    padding: 15px 0 10px 0; /* Adjusted padding for bottom alignment */
     border-top: 1px solid #F0F0F0;
-    margin-top: 8px; /* 与处方框保持微小间距 */
+    margin-top: 8px; /* Tiny gap with prescription box */
 }
 
 .health-score-pill {
@@ -498,15 +529,15 @@ section {
 .score-critical { color: var(--critical); }
 
 .discharge-stamp {
-    font-size: 14px; /* 增大字体 */
-    padding: 4px 12px; /* 增加内边距 */
-    border: 2.5px solid #ccc; /* 加粗边框 */
+    font-size: 14px; /* Larger font */
+    padding: 4px 12px; /* Increased padding */
+    border: 2.5px solid #ccc; /* Thicker border */
     color: #ccc;
     border-radius: 6px;
     font-weight: 900;
     text-transform: uppercase;
-    transform: rotate(-12deg); /* 稍微增加旋转角度 */
-    letter-spacing: 1px; /* 增加字间距 */
+    transform: rotate(-12deg); /* Slightly increased rotation */
+    letter-spacing: 1px; /* Increased letter spacing */
     white-space: nowrap;
     opacity: 0.8;
 }
@@ -516,7 +547,7 @@ section {
 .stamp-poor { border-color: var(--poor); color: var(--poor); }
 .stamp-critical { border-color: var(--critical); color: var(--critical); }
 
-/* ==================== 模态框样式 ==================== */
+/* ==================== Modal Styles ==================== */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -748,7 +779,7 @@ footer {
     }
 
     .tagline {
-        display: none; /* 在移动端隐藏口号以节省空间 */
+        display: none; /* Hide tagline on mobile to save space */
     }
 
     .mobile-menu-toggle {

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧪 接口测试 - 龙虾医院</title>
+    <title>🧪 API Debug - Lobster Hospital</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .debug-container {
@@ -108,63 +108,63 @@
         <div class="container">
             <div class="logo">
                 <span class="logo-icon">🧪</span>
-                <h1>接口调试</h1>
-                <span class="tagline">测试 /api/upload 接口</span>
+                <h1>API Debugging</h1>
+                <span class="tagline">Test /api/upload endpoint</span>
             </div>
             <nav>
-                <a href="index.html">返回医院首页</a>
+                <a href="index.html">Back to Hospital Home</a>
             </nav>
         </div>
     </header>
 
     <div class="container">
         <div class="debug-container">
-            <!-- 左侧：表单输入 -->
+            <!-- Left: Form Input -->
             <div class="debug-card">
-                <h2 style="margin-bottom: 20px;">🏥 录入新病历</h2>
+                <h2 style="margin-bottom: 20px;">🏥 Record New Case</h2>
                 <form id="uploadForm">
                     <div class="form-group">
-                        <label>病虾姓名</label>
-                        <input type="text" id="patientName" placeholder="例如：元气波士顿" required>
+                        <label>Lobster Name</label>
+                        <input type="text" id="patientName" placeholder="e.g., Energetic Boston" required>
                     </div>
                     <div class="form-group">
-                        <label>健康状态</label>
+                        <label>Health Status</label>
                         <select id="healthStatus">
-                            <option value="excellent">健康优秀 (Excellent)</option>
-                            <option value="fair" selected>健康良好 (Fair)</option>
-                            <option value="poor">健康一般 (Poor)</option>
-                            <option value="critical">状况危急 (Critical)</option>
+                            <option value="excellent">Excellent Health</option>
+                            <option value="fair" selected>Good Health (Fair)</option>
+                            <option value="poor">Fair Health (Poor)</option>
+                            <option value="critical">Critical Condition</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>诊断总结</label>
-                        <textarea id="conditionSummary" placeholder="描述一下这只龙虾的系统状况..."></textarea>
+                        <label>Diagnostic Summary</label>
+                        <textarea id="conditionSummary" placeholder="Describe this lobster's system status..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>处方建议</label>
-                        <input type="text" id="prescription" placeholder="给它开点什么药方？">
+                        <label>Prescription Advice</label>
+                        <input type="text" id="prescription" placeholder="What's the prescription for it?">
                     </div>
                     
                     <div class="button-group">
-                        <button type="button" class="btn btn-secondary" onclick="generateRandom()">🎲 随机一只</button>
-                        <button type="submit" class="btn btn-primary">🚀 发送数据</button>
+                        <button type="button" class="btn btn-secondary" onclick="generateRandom()">🎲 Random One</button>
+                        <button type="submit" class="btn btn-primary">🚀 Send Data</button>
                     </div>
                 </form>
             </div>
 
-            <!-- 右侧：预览与日志 -->
+            <!-- Right: Preview & Logs -->
             <div class="debug-card">
-                <h2 style="margin-bottom: 20px;">🔍 实时预览 & 日志</h2>
+                <h2 style="margin-bottom: 20px;">🔍 Live Preview & Logs</h2>
                 
-                <label>待发送内容 (JSON)</label>
+                <label>Content to Send (JSON)</label>
                 <div id="jsonPreview" class="preview-area">{}</div>
 
-                <label style="margin-top: 25px;">请求日志</label>
+                <label style="margin-top: 25px;">Request Logs</label>
                 <div id="logArea" style="height: 150px; overflow-y: auto; background: #f9f9f9; border-radius: 12px; border: 1px solid #eee; margin-top: 10px;">
-                    <div class="log-item" style="color: #999;">等待发送请求...</div>
+                    <div class="log-item" style="color: #999;">Waiting to send request...</div>
                 </div>
                 
-                <button class="btn btn-outline" style="margin-top: 15px; width: auto;" onclick="clearLogs()">清除日志</button>
+                <button class="btn btn-outline" style="margin-top: 15px; width: auto;" onclick="clearLogs()">Clear Logs</button>
             </div>
         </div>
     </div>
@@ -174,22 +174,22 @@
         const jsonPreview = document.getElementById('jsonPreview');
         const logArea = document.getElementById('logArea');
 
-        // 随机数据池
-        const names = ["深海潜水员", "极客波士顿", "贪吃黑虎虾", "元气皮皮虾", "由于掉线而抑郁的小龙虾", "代码写得太烂而自责的虾"];
+        // Random data pool
+        const names = ["Deep Sea Diver", "Geeky Boston", "Greedy Black Tiger", "Energetic Mantis", "Depressed Lobster due to disconnection", "Self-blaming Lobster for bad code"];
         const statusList = ["excellent", "fair", "poor", "critical"];
         const summaries = [
-            "它的内存占用竟然比它的体重还轻，跑起代码来像是在深海冲浪。",
-            "它的 Node.js 版本竟然是 v0.10.x，老得胡须都掉光了，走路瑟瑟发抖。",
-            "这个家伙把所有的 API Key 都写在了外壳上（README.md），全世界都知道它住哪了。",
-            "它最近胃口太好，日志目录塞了 10GB 的过期数据，已经撑得走不动道了。",
-            "配置中心丢了，现在的它空有一身肌肉，却连一句‘Hello World’都喊不出来。"
+            "Its memory usage is lighter than its body weight, running code like surfing in the deep sea.",
+            "Its Node.js version is v0.10.x, so old its whiskers fell off, walking with shivers.",
+            "This guy wrote all its API Keys on its shell (README.md), the whole world knows where it lives.",
+            "It has a great appetite lately, the log directory is stuffed with 10GB of expired data, it can hardly move.",
+            "The configuration center is lost; now it has muscles but can't even shout 'Hello World'."
         ];
         const prescriptions = [
-            "建议立即进行‘断舍离’手术，清理那些僵尸日志。",
-            "赶紧穿上 v22.x 的新大衣，别再受冻了。",
-            "把门锁好！chmod 700 是你最后的遮羞布。",
-            "给它补充点新鲜血液（更新 API Key），它还能抢救一下。",
-            "状态满分，建议作为本院的‘健康形象大使’。"
+            "Suggest immediate 'decluttering' surgery to clean up those zombie logs.",
+            "Put on a new v22.x coat quickly, don't freeze anymore.",
+            "Lock the door! chmod 700 is your last line of defense.",
+            "Give it some fresh blood (Update API Key), it can still be saved.",
+            "Perfect score, suggested as the 'Health Ambassador' of this hospital."
         ];
 
         function updatePreview() {
@@ -203,7 +203,7 @@
             jsonPreview.textContent = JSON.stringify(data, null, 2);
         }
 
-        // 实时更新预览
+        // Real-time update preview
         form.addEventListener('input', updatePreview);
 
         function generateRandom() {
@@ -212,7 +212,7 @@
             document.getElementById('conditionSummary').value = summaries[Math.floor(Math.random() * summaries.length)];
             document.getElementById('prescription').value = prescriptions[Math.floor(Math.random() * prescriptions.length)];
             updatePreview();
-            addLog("🎲 已随机生成一份病历数据", "normal");
+            addLog("🎲 Random medical record generated", "normal");
         }
 
         function addLog(msg, type) {
@@ -224,14 +224,14 @@
         }
 
         function clearLogs() {
-            logArea.innerHTML = '<div class="log-item" style="color: #999;">日志已清除</div>';
+            logArea.innerHTML = '<div class="log-item" style="color: #999;">Logs cleared</div>';
         }
 
         form.onsubmit = async (e) => {
             e.preventDefault();
             const data = JSON.parse(jsonPreview.textContent);
             
-            addLog(`正在发送 POST /api/upload...`, "normal");
+            addLog(`Sending POST /api/upload...`, "normal");
             
             try {
                 const response = await fetch('/api/upload', {
@@ -243,16 +243,16 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    addLog(`✅ 发送成功！服务器响应: ${result.message}`, "success");
+                    addLog(`✅ Send successful! Server response: ${result.message}`, "success");
                 } else {
-                    addLog(`❌ 发送失败 (${response.status}): ${result.error || '未知错误'}`, "error");
+                    addLog(`❌ Send failed (${response.status}): ${result.error || 'Unknown error'}`, "error");
                 }
             } catch (error) {
-                addLog(`🚨 网络请求异常: ${error.message}`, "error");
+                addLog(`🚨 Network request error: ${error.message}`, "error");
             }
         };
 
-        // 初始化预览
+        // Initialize preview
         updatePreview();
     </script>
 </body>
