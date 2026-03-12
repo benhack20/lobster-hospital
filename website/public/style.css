@@ -891,3 +891,158 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* Compact Mobile Portrait Styles */
+@media screen and (max-width: 600px) and (orientation: portrait) {
+    .container {
+        padding: 0 15px;
+    }
+
+    section {
+        padding: 30px 0;
+    }
+
+    .section-title {
+        font-size: 22px;
+        margin-bottom: 25px;
+    }
+
+    /* Header adjustments */
+    header {
+        padding: 12px 0;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    .logo h1 {
+        font-size: 18px;
+    }
+
+    /* Stats adjustments */
+    .stats-section {
+        padding: 25px 0;
+    }
+
+    .stats-grid {
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    /* Symptom cards */
+    .symptoms-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .symptom-card {
+        padding: 15px 10px;
+        border-radius: 18px;
+    }
+
+    .symptom-card h3 {
+        font-size: 15px;
+    }
+
+    .symptom-card p {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .symptom-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    /* Record cards - More compact */
+    .record-card {
+        min-height: auto;
+        max-height: none;
+    }
+
+    .record-header {
+        padding: 12px 15px;
+    }
+
+    .record-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    .record-body {
+        padding: 15px 15px 10px 15px;
+        gap: 8px;
+    }
+
+    .condition-msg {
+        font-size: 13px;
+        -webkit-line-clamp: 4;
+    }
+
+    .prescription-section {
+        padding: 8px 12px;
+    }
+
+    .record-footer {
+        padding: 10px 0 5px 0;
+    }
+
+    .health-score-pill {
+        font-size: 12px;
+    }
+
+    .discharge-stamp {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-width: 2px;
+    }
+
+    /* Modal compactness */
+    .modal-content {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .modal-record-header {
+        margin-bottom: 15px;
+    }
+
+    .modal-avatar-large {
+        width: 50px;
+        height: 50px;
+        font-size: 30px;
+    }
+
+    .modal-header-info h2 {
+        font-size: 20px;
+    }
+
+    .modal-text-content {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .modal-divider {
+        margin-bottom: 15px;
+    }
+
+    .modal-section {
+        margin-bottom: 15px;
+    }
+
+    .nav-links {
+        top: 60px; /* Adjusted for smaller header */
+    }
+}
